@@ -1,0 +1,2729 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Суть</title><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#f1f2f6"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Суть"><meta name="apple-mobile-web-app-status-bar-style" content="default"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png"><style>:root{color-scheme:light;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body>
+<title>Суть</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Literata:opsz,wght@7..72,400;7..72,600;7..72,700&display=swap">
+<style>
+/* Суть. Картотека с маркерами: бумажные карточки на прохладном столе, чернильный текст,
+   цвет несут только маркеры коллекций. Телефон: колонка с нижней панелью; широкий экран: рейка слева. */
+:root {
+  --bg: #f1f2f6;
+  --surface: #ffffff;
+  --surface-2: #e7e9f0;
+  --ink: #171b30;
+  --ink-2: #4c526c;
+  --ink-3: #7b829c;
+  --line: #d8dbe6;
+  --accent: #2a3fe6;
+  --danger: #c22a3a;
+  --shadow: 23 27 48;
+  --mk-0: #ffe45e;
+  --mk-1: #b9ee84;
+  --mk-2: #ffb3d6;
+  --mk-3: #a9d6ff;
+  --mk-4: #ffc98f;
+  --mk-5: #d6c6ff;
+  --mk-6: #a0eadc;
+  --mk-7: #ffb5a8;
+  --wash-k: 60%;
+  --font-ui: "Golos Text", "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-read: "Literata", Georgia, "Times New Roman", serif;
+  --r-card: 10px;
+  --r-ctl: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1118;
+    --surface: #191c28;
+    --surface-2: #242838;
+    --ink: #eceef7;
+    --ink-2: #a9afc6;
+    --ink-3: #757c97;
+    --line: #2e3348;
+    --accent: #8c9bff;
+    --danger: #ff7785;
+    --shadow: 0 0 0;
+    --mk-0: #6a5a00;
+    --mk-1: #2f5c17;
+    --mk-2: #6f2a4c;
+    --mk-3: #1d4b7c;
+    --mk-4: #6e4212;
+    --mk-5: #48388a;
+    --mk-6: #165c52;
+    --mk-7: #73302a;
+    --wash-k: 42%;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1118;
+  --surface: #191c28;
+  --surface-2: #242838;
+  --ink: #eceef7;
+  --ink-2: #a9afc6;
+  --ink-3: #757c97;
+  --line: #2e3348;
+  --accent: #8c9bff;
+  --danger: #ff7785;
+  --shadow: 0 0 0;
+  --mk-0: #6a5a00;
+  --mk-1: #2f5c17;
+  --mk-2: #6f2a4c;
+  --mk-3: #1d4b7c;
+  --mk-4: #6e4212;
+  --mk-5: #48388a;
+  --mk-6: #165c52;
+  --mk-7: #73302a;
+  --wash-k: 42%;
+  color-scheme: dark;
+}
+
+/* ── основа ── */
+*, *::before, *::after { box-sizing: border-box; }
+html { height: 100%; background: var(--bg); }
+body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--ink);
+  font: 400 15px/1.5 var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+h1, h2, h3, p { margin: 0; }
+[hidden] { display: none !important; }
+button, input, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.mk-0 { --mk: var(--mk-0); }
+.mk-1 { --mk: var(--mk-1); }
+.mk-2 { --mk: var(--mk-2); }
+.mk-3 { --mk: var(--mk-3); }
+.mk-4 { --mk: var(--mk-4); }
+.mk-5 { --mk: var(--mk-5); }
+.mk-6 { --mk: var(--mk-6); }
+.mk-7 { --mk: var(--mk-7); }
+
+/* след маркера под текстом */
+.hl {
+  background-image: linear-gradient(transparent 0 56%, var(--mk, var(--mk-0)) 56% 92%, transparent 92%);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  padding: 0 0.14em;
+  margin: 0 -0.14em;
+}
+
+/* ── каркас ── */
+.app { height: 100%; display: flex; flex-direction: column; }
+.stage { flex: 1; min-width: 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+.view {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  padding-block: 20px 40px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.vstack { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+.vstack.tight { gap: 8px; }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.grow { flex: 1; }
+.muted { color: var(--ink-2); font-size: 14px; }
+
+.tabbar {
+  display: flex;
+  border-top: 1px solid var(--line);
+  background: var(--bg);
+  padding-left: max(6px, env(safe-area-inset-left, 0px));
+  padding-right: max(6px, env(safe-area-inset-right, 0px));
+}
+.tab {
+  flex: 1;
+  min-width: 0;
+  min-height: 58px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 2px;
+  border: 0;
+  background: none;
+  color: var(--ink-2);
+  font: 500 11.5px/1 var(--font-ui);
+}
+.tab[aria-current="page"] { color: var(--ink); font-weight: 700; }
+.tab[aria-current="page"] .nav-label,
+.rail-item[aria-current="page"] .nav-label {
+  background-image: linear-gradient(transparent 0 46%, var(--mk-0) 46% 100%);
+  padding: 0 3px;
+  margin: 0 -3px;
+}
+.tab-plus { width: 46px; height: 34px; display: grid; place-items: center; border-radius: 11px; background: var(--ink); color: var(--bg); }
+
+.rail { display: none; }
+.brand { padding: 0 10px 22px; font: 700 27px/1 var(--font-read); letter-spacing: -0.01em; }
+.rail-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: var(--r-ctl);
+  background: none;
+  color: var(--ink-2);
+  font: 500 15px/1 var(--font-ui);
+  text-align: left;
+}
+.rail-item:hover { background: var(--surface-2); color: var(--ink); }
+.rail-item[aria-current="page"] { color: var(--ink); font-weight: 700; }
+.rail-add { margin-top: 14px; }
+.rail-foot { margin-top: auto; padding: 0 10px; font-size: 12.5px; line-height: 1.45; color: var(--ink-3); }
+
+@media (min-width: 900px) {
+  .app { flex-direction: row; }
+  .tabbar { display: none; }
+  .rail {
+    flex: 0 0 236px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 28px 14px 22px max(14px, env(safe-area-inset-left, 0px));
+    border-right: 1px solid var(--line);
+  }
+  .view {
+    padding-block: 40px 64px;
+    padding-left: max(32px, env(safe-area-inset-left, 0px));
+    padding-right: max(32px, env(safe-area-inset-right, 0px));
+  }
+}
+
+/* ── текст и заголовки ── */
+.vh { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
+.vh h1, .stash-head h1 { font: 700 clamp(28px, 6.4vw, 36px)/1.14 var(--font-read); letter-spacing: -0.012em; text-wrap: balance; overflow-wrap: anywhere; }
+.eyebrow { margin-bottom: 4px; font: 500 13.5px/1.3 var(--font-ui); color: var(--ink-2); }
+.label { font: 600 11.5px/1.2 var(--font-ui); letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-2); }
+.hint { font-size: 13.5px; line-height: 1.45; color: var(--ink-2); }
+.lead { max-width: 62ch; font: 400 16px/1.55 var(--font-read); color: var(--ink-2); }
+.pill {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 17px;
+  background: var(--surface);
+  font: 600 14px/1 var(--font-ui);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ── кнопки и поля ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid transparent;
+  border-radius: var(--r-ctl);
+  background: var(--surface-2);
+  color: var(--ink);
+  font: 600 15px/1.1 var(--font-ui);
+  white-space: nowrap;
+}
+.btn:disabled { opacity: 0.45; cursor: default; }
+.btn-primary { background: var(--ink); color: var(--bg); }
+.btn-line { background: transparent; border-color: var(--line); }
+.btn-ghost { background: transparent; }
+.btn-danger { color: var(--danger); }
+.btn-solid-danger { background: var(--danger); color: var(--bg); }
+.btn-sm { min-height: 36px; padding: 0 12px; font-size: 14px; }
+.iconbtn {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  display: inline-grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink);
+}
+.iconbtn:hover { background: color-mix(in srgb, var(--ink) 9%, transparent); }
+.iconbtn.line { border: 1px solid var(--line); }
+.linkbtn { align-self: flex-start; padding: 6px 0; border: 0; background: none; color: var(--accent); font: 600 14px/1.2 var(--font-ui); text-align: left; }
+
+.field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.field-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.input, .textarea, .select {
+  width: 100%;
+  min-height: 46px;
+  padding: 11px 13px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-ctl);
+  background: var(--surface);
+  color: var(--ink);
+  font: 400 16px/1.4 var(--font-ui);
+}
+.textarea { min-height: 124px; resize: vertical; font-family: var(--font-read); line-height: 1.5; }
+.textarea.short { min-height: 84px; }
+.input::placeholder, .textarea::placeholder { color: var(--ink-3); }
+.select.sm { width: auto; min-height: 36px; padding: 6px 10px; font-size: 14px; }
+.counter { font: 500 12.5px/1 var(--font-ui); color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.counter.warn { color: var(--danger); }
+.form-error { color: var(--danger); font-size: 14px; font-weight: 500; }
+
+.seg { align-self: flex-start; display: inline-flex; max-width: 100%; gap: 2px; padding: 3px; border-radius: 12px; background: var(--surface-2); }
+.seg button {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--ink-2);
+  font: 600 14px/1 var(--font-ui);
+  white-space: nowrap;
+}
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgb(var(--shadow) / 0.16); }
+.seg.full { align-self: stretch; display: flex; }
+.seg.full button { flex: 1; min-width: 0; padding: 0 6px; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 17px;
+  background: transparent;
+  color: var(--ink-2);
+  font: 500 13.5px/1 var(--font-ui);
+  white-space: nowrap;
+}
+.chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+
+.searchbox { position: relative; }
+.searchbox svg { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--ink-3); pointer-events: none; }
+.searchbox .input { padding-left: 40px; }
+.toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+
+/* ── блоки экранов ── */
+.notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 12px;
+  margin-bottom: 18px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  background: var(--surface);
+  font-size: 14px;
+  line-height: 1.45;
+}
+.notice.inline { margin-bottom: 0; }
+.notice svg { flex: none; color: var(--accent); }
+.notice p { flex: 1 1 220px; min-width: 0; }
+
+.deck {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 10px;
+  padding: 20px 20px 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  background: var(--surface);
+  /* две карточки, выглядывающие из-под верхней */
+  box-shadow: 0 5px 0 -1px var(--surface), 0 5px 0 0 var(--line), 0 10px 0 -2px var(--surface), 0 10px 0 -1px var(--line);
+}
+.deck-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.deck-count { font: 600 13px/1 var(--font-ui); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.deck-title { font: 700 clamp(22px, 5.4vw, 28px)/1.26 var(--font-read); letter-spacing: -0.01em; text-wrap: balance; overflow-wrap: anywhere; }
+.deck-meta { color: var(--ink-2); font-size: 14.5px; }
+.dots { display: flex; gap: 5px; }
+.dots i { flex: 1; max-width: 44px; height: 5px; border-radius: 3px; background: var(--surface-2); }
+.dots i.on { background: var(--ink); }
+
+.block { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.block-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; }
+.block-head h2 { font: 700 19px/1.2 var(--font-read); }
+
+.week {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+  padding: 14px 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  background: var(--surface);
+}
+.wd { display: flex; flex-direction: column; align-items: center; gap: 7px; font: 500 12px/1 var(--font-ui); color: var(--ink-3); }
+.wd-dot {
+  width: 34px;
+  max-width: 100%;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 1.5px solid var(--line);
+  border-radius: 50%;
+  color: var(--ink);
+  font: 600 13px/1 var(--font-ui);
+  font-variant-numeric: tabular-nums;
+}
+.wd.on .wd-dot { border-color: var(--mk-0); background: var(--mk-0); }
+.wd.today { color: var(--ink); font-weight: 700; }
+.wd.today .wd-dot { border-color: var(--ink); }
+
+.list { display: flex; flex-direction: column; gap: 10px; }
+.icard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  padding: 16px 16px 13px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  background: var(--surface);
+  cursor: pointer;
+}
+.icard:hover { border-color: var(--ink-3); }
+.icard-title { font: 600 18px/1.34 var(--font-read); overflow-wrap: anywhere; }
+.icard-text {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+  font: 400 15px/1.52 var(--font-read);
+  color: var(--ink-2);
+  overflow-wrap: anywhere;
+}
+.icard-text.solo { -webkit-line-clamp: 4; line-clamp: 4; font-size: 16.5px; color: var(--ink); }
+.icard-meta { display: flex; align-items: center; gap: 10px; min-width: 0; padding-top: 2px; font: 500 12.5px/1.3 var(--font-ui); color: var(--ink-3); }
+.tag-st { display: inline-flex; align-items: center; gap: 6px; min-width: 0; color: var(--ink-2); }
+.tag-st i, .rcard-kicker i { flex: none; width: 10px; height: 10px; border-radius: 3px; background: var(--mk, var(--mk-0)); }
+.ellip { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.badge { flex: none; padding: 3px 7px; border-radius: 6px; background: var(--surface-2); color: var(--ink-2); font: 600 11px/1 var(--font-ui); letter-spacing: 0.03em; }
+.fav-on { flex: none; display: inline-grid; color: var(--danger); }
+.fav-on svg { fill: currentColor; }
+.icard.is-skip { opacity: 0.6; }
+
+/* строка готовой подборки в каталоге */
+.pack { display: flex; align-items: center; gap: 12px; min-width: 0; padding: 14px 14px 14px 16px; border: 1px solid var(--line); border-radius: var(--r-card); background: var(--surface); }
+.pack-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.pack-title { display: flex; align-items: center; gap: 8px; min-width: 0; font: 600 16.5px/1.3 var(--font-read); overflow-wrap: anywhere; }
+.pack-title i { flex: none; width: 10px; height: 10px; border-radius: 3px; background: var(--mk); }
+.pack-meta { font: 500 12.5px/1.3 var(--font-ui); color: var(--ink-3); }
+
+/* сводка интересов */
+.taste { display: flex; flex-direction: column; }
+.taste-row { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 14px; min-width: 0; padding: 9px 0; border-top: 1px solid var(--line); }
+.taste-row:first-child { padding-top: 0; border-top: 0; }
+.taste-row .tag-st { font: 600 14.5px/1.3 var(--font-ui); color: var(--ink); }
+.taste-nums { font: 500 13px/1.3 var(--font-ui); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+
+/* коллекция: карточка-разделитель с язычком, как в картотечном ящике */
+.stashes { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 32px 12px; padding-top: 21px; }
+.stash {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  min-height: 104px;
+  padding: 14px 14px 12px;
+  border: 1px solid var(--line);
+  border-radius: 0 var(--r-card) var(--r-card) var(--r-card);
+  background: var(--surface);
+  box-shadow: 0 4px 0 -1px var(--surface), 0 4px 0 0 var(--line);
+  color: var(--ink);
+  text-align: left;
+}
+.stash:hover { border-color: var(--ink-3); }
+.stash-tab {
+  position: absolute;
+  left: -1px;
+  bottom: 100%;
+  min-width: 44px;
+  height: 21px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 10px;
+  border-radius: 7px 7px 0 0;
+  background: var(--mk);
+  color: var(--ink);
+  font: 700 12px/1 var(--font-ui);
+  font-variant-numeric: tabular-nums;
+}
+.stash-title { font: 600 17px/1.28 var(--font-read); overflow-wrap: anywhere; }
+.stash-meta { margin-top: auto; font: 500 12.5px/1.3 var(--font-ui); color: var(--ink-3); }
+.stash.new {
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-style: dashed;
+  border-radius: var(--r-card);
+  background: transparent;
+  box-shadow: none;
+  color: var(--ink-2);
+  font: 600 14px/1.2 var(--font-ui);
+  text-align: center;
+}
+
+.backlink {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 36px;
+  margin: -6px 0 -10px -6px;
+  padding: 0 8px 0 4px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--ink-2);
+  font: 600 14px/1 var(--font-ui);
+}
+.stash-head { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+.tabchip { display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 7px; background: var(--mk); color: var(--ink); font: 700 12px/1 var(--font-ui); }
+
+.tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+@media (min-width: 620px) { .tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.tile { display: flex; flex-direction: column; gap: 6px; min-width: 0; padding: 14px 14px 12px; border: 1px solid var(--line); border-radius: var(--r-card); background: var(--surface); }
+.tile b { font: 700 30px/1 var(--font-read); font-variant-numeric: tabular-nums; }
+.tile span { font: 500 12.5px/1.3 var(--font-ui); color: var(--ink-2); }
+.panel { display: flex; flex-direction: column; gap: 14px; min-width: 0; padding: 16px; border: 1px solid var(--line); border-radius: var(--r-card); background: var(--surface); }
+.heat-wrap { overflow-x: auto; }
+.heat { display: grid; grid-template-rows: repeat(7, 14px); grid-auto-flow: column; grid-auto-columns: 14px; gap: 3px; width: max-content; }
+.heat i, .legend i { border-radius: 3px; background: var(--surface-2); }
+.heat i.l1, .legend i.l1 { background: var(--ink-3); background: color-mix(in srgb, var(--accent) 30%, var(--surface-2)); }
+.heat i.l2, .legend i.l2 { background: var(--ink-2); background: color-mix(in srgb, var(--accent) 62%, var(--surface-2)); }
+.heat i.l3, .legend i.l3 { background: var(--accent); }
+.heat i.off { visibility: hidden; }
+.legend { display: flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--ink-3); }
+.legend i { width: 12px; height: 12px; }
+.stepper { display: inline-flex; align-items: center; gap: 6px; }
+.stepper output { min-width: 124px; text-align: center; font: 600 16px/1 var(--font-ui); font-variant-numeric: tabular-nums; }
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 26px 20px 22px;
+  border: 1px dashed var(--ink-3);
+  border-radius: var(--r-card);
+  background: var(--surface);
+}
+.empty h2 { font: 700 22px/1.2 var(--font-read); }
+.empty p { max-width: 54ch; color: var(--ink-2); }
+
+.boot { display: flex; flex-direction: column; gap: 12px; }
+.boot h1 { font: 700 clamp(28px, 6.4vw, 36px)/1.14 var(--font-read); }
+.boot p { max-width: 52ch; margin-bottom: 8px; color: var(--ink-2); }
+.boot i { height: 92px; border: 1px solid var(--line); border-radius: var(--r-card); background: var(--surface); animation: pulse 1.6s ease-in-out infinite; }
+.boot i:nth-of-type(2) { animation-delay: 0.2s; }
+.boot i:nth-of-type(3) { animation-delay: 0.4s; }
+@keyframes pulse { 50% { opacity: 0.55; } }
+
+/* ── чтение ── */
+.reader {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px);
+  background: var(--bg);   /* запасной фон для браузеров без color-mix */
+  background: color-mix(in srgb, var(--mk, var(--mk-0)) var(--wash-k), var(--bg));
+  color: var(--ink);
+}
+.reader-top { display: flex; align-items: center; gap: 8px; padding: 8px max(8px, env(safe-area-inset-right, 0px)) 4px max(8px, env(safe-area-inset-left, 0px)); }
+.rprog { flex: 1; min-width: 0; display: flex; gap: 4px; }
+.rprog i { flex: 1; height: 4px; border-radius: 2px; background: var(--line); background: color-mix(in srgb, var(--ink) 20%, transparent); }
+.rprog i.on { background: var(--ink); }
+.rprog.bar { height: 4px; border-radius: 2px; background: var(--line); background: color-mix(in srgb, var(--ink) 20%, transparent); }
+.rprog.bar i { flex: none; background: var(--ink); }
+.rcount { flex: none; min-width: 52px; text-align: right; font: 600 13px/1 var(--font-ui); font-variant-numeric: tabular-nums; }
+.reader-stage {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px));
+  overflow: hidden;
+  touch-action: pan-y;
+}
+.rcard {
+  width: 100%;
+  max-width: 580px;
+  max-height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 30px 24px 24px;
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: 0 22px 44px -22px rgb(var(--shadow) / 0.5), 0 2px 6px rgb(var(--shadow) / 0.08);
+  transition: transform 0.18s ease-out;
+}
+.rcard.in-next { animation: in-next 0.22s ease-out; }
+.rcard.in-prev { animation: in-prev 0.22s ease-out; }
+/* появление только сдвигом, без прозрачности: карточка читается с первого кадра */
+@keyframes in-next { from { transform: translateX(32px); } }
+@keyframes in-prev { from { transform: translateX(-32px); } }
+.rcard-kicker { display: flex; align-items: center; gap: 8px; min-width: 0; font: 600 12.5px/1.2 var(--font-ui); color: var(--ink-2); }
+.rcard-title { font: 700 clamp(25px, 6.4vw, 33px)/1.25 var(--font-read); letter-spacing: -0.012em; text-wrap: balance; overflow-wrap: anywhere; }
+.rcard-text { font: 400 clamp(18px, 4.7vw, 20px)/1.62 var(--font-read); white-space: pre-wrap; overflow-wrap: anywhere; }
+.rcard-text.solo { font-size: clamp(21px, 5.4vw, 25px); line-height: 1.5; }
+.rcard-foot { display: flex; flex-direction: column; gap: 8px; padding-top: 16px; border-top: 1px solid var(--line); font: 500 13.5px/1.4 var(--font-ui); color: var(--ink-2); overflow-wrap: anywhere; }
+.rcard-foot a { color: var(--accent); }
+.rtags { display: flex; flex-wrap: wrap; gap: 4px 10px; color: var(--ink-3); }
+.rend { align-items: flex-start; }
+.rend h2 { font: 700 28px/1.22 var(--font-read); }
+.reader-bottom { display: flex; align-items: flex-start; justify-content: center; gap: 12px; padding: 6px max(16px, env(safe-area-inset-right, 0px)) 16px max(16px, env(safe-area-inset-left, 0px)); }
+.rbtn {
+  flex: none;
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 2px 6px rgb(var(--shadow) / 0.14);
+}
+.rbtn:disabled { opacity: 0.4; cursor: default; }
+.rbtn.fav.on { color: var(--danger); }
+.rbtn.fav.on svg { fill: currentColor; }
+.rbtn.skip.on { background: var(--ink); color: var(--bg); }
+.rctl { flex: none; display: flex; flex-direction: column; align-items: center; gap: 5px; font: 500 11px/1 var(--font-ui); color: var(--ink); }
+.rnext {
+  flex: 1;
+  max-width: 260px;
+  height: 52px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 26px;
+  background: var(--ink);
+  color: var(--bg);
+  font: 600 16px/1 var(--font-ui);
+}
+
+/* ── шторки, диалоги, меню, уведомления ── */
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 20px);
+  background: rgb(8 10 20 / 0.5);
+}
+.sheet {
+  width: 100%;
+  max-width: 620px;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  border-radius: 18px 18px 0 0;
+  background: var(--surface);
+  animation: sheet-in 0.22s ease-out;
+}
+@keyframes sheet-in { from { transform: translateY(28px); } }
+.sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 10px 6px 20px; }
+.sheet-head h2 { font: 700 21px/1.2 var(--font-read); }
+.sheet-tabs { padding: 4px 20px 10px; }
+.sheet-body { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding: 8px 20px 20px; }
+.sheet-foot { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; padding: 12px 20px 14px; border-top: 1px solid var(--line); }
+.form { gap: 16px; }
+@media (min-width: 700px) {
+  .scrim { align-items: center; padding: 24px; }
+  .sheet { max-height: min(100%, 800px); padding-bottom: 0; border-radius: 18px; }
+}
+.scrim.center { align-items: center; padding: 24px max(20px, env(safe-area-inset-right, 0px)) 24px max(20px, env(safe-area-inset-left, 0px)); }
+.dialog { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 12px; padding: 22px 20px 18px; border-radius: 16px; background: var(--surface); }
+.dialog h2 { font: 700 20px/1.25 var(--font-read); }
+.dialog p { color: var(--ink-2); }
+.dialog-actions { display: flex; flex-direction: column; gap: 8px; padding-top: 6px; }
+.dialog-actions .btn { white-space: normal; }
+
+.menu-scrim { position: fixed; inset: 0; z-index: 40; }
+.menu {
+  position: absolute;
+  min-width: 220px;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: 0 14px 34px -12px rgb(var(--shadow) / 0.45);
+}
+.menu-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--ink);
+  font: 500 15px/1 var(--font-ui);
+  text-align: left;
+}
+.menu-item:hover { background: var(--surface-2); }
+.menu-item.danger { color: var(--danger); }
+
+#toasts {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 78px);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  pointer-events: none;
+}
+.toast {
+  pointer-events: auto;
+  max-width: 480px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  background: var(--ink);
+  color: var(--bg);
+  font: 500 14px/1.35 var(--font-ui);
+  box-shadow: 0 10px 24px -10px rgb(var(--shadow) / 0.6);
+  animation: toast-in 0.2s ease-out;
+}
+.toast button { flex: none; padding: 4px 2px; border: 0; background: none; color: inherit; font: 700 14px/1 var(--font-ui); text-decoration: underline; text-underline-offset: 3px; }
+@keyframes toast-in { from { transform: translateY(10px); } }
+
+/* ── добавление списком и через Claude ── */
+.bulk-preview { display: flex; flex-direction: column; gap: 6px; }
+.bulk-item { display: flex; flex-direction: column; gap: 2px; min-width: 0; padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; }
+.bulk-item b { font: 600 15px/1.3 var(--font-read); overflow-wrap: anywhere; }
+.bulk-item span { color: var(--ink-2); overflow-wrap: anywhere; }
+.pick { display: flex; align-items: flex-start; gap: 12px; padding: 12px; border: 1px solid var(--line); border-radius: 10px; cursor: pointer; }
+.pick input { flex: none; width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--ink); }
+.pick div { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.pick b { font: 600 16px/1.3 var(--font-read); overflow-wrap: anywhere; }
+.pick span { font: 400 14.5px/1.5 var(--font-read); color: var(--ink-2); overflow-wrap: anywhere; }
+.busy { display: flex; align-items: center; gap: 12px; padding: 14px; border: 1px solid var(--line); border-radius: 10px; }
+.spin { flex: none; width: 18px; height: 18px; border: 2px solid var(--line); border-top-color: var(--ink); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.swatches { display: flex; flex-wrap: wrap; gap: 10px; }
+.swatch { width: 40px; height: 40px; padding: 0; border: 2px solid transparent; border-radius: 10px; background: var(--mk); }
+.swatch[aria-checked="true"] { border-color: var(--ink); box-shadow: inset 0 0 0 2px var(--surface); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+</style>
+<div class="app" id="app">
+  <aside class="rail" id="rail" aria-label="Разделы"></aside>
+  <main class="stage" id="stage">
+    <div class="view">
+      <div id="notice"></div>
+      <div id="viewbody">
+        <div class="boot">
+          <h1>Суть</h1>
+          <p>Открываю картотеку. Здесь появится подборка идей на сегодня и ваши коллекции.</p>
+          <i></i><i></i><i></i>
+        </div>
+      </div>
+    </div>
+  </main>
+  <nav class="tabbar" id="tabbar" aria-label="Разделы"></nav>
+</div>
+<div id="layers"></div>
+<div id="toasts" role="status" aria-live="polite"></div>
+<datalist id="dl-sources"></datalist>
+<script>
+window.SUT_PACKS = [{"id": "00s1", "title": "Привычки", "note": "Как маленькие ежедневные действия складываются в большие перемены.", "color": 0, "ideas": [{"id": "00i101", "title": "Один процент в день — это не мелочь", "text": "Маленькие улучшения незаметны по отдельности, но складываются как сложный процент. Если становиться лучше на 1% каждый день, за год результат вырастет примерно в 37 раз. Верно и обратное: небольшие ежедневные послабления так же тихо накапливаются в большой откат.", "source": "Джеймс Клир, «Атомные привычки»", "tags": ["привычки", "рост"]}, {"id": "00i102", "title": "Петля привычки: сигнал, действие, награда", "text": "Привычка устроена как цикл: сигнал запускает действие, а награда его закрепляет. Чтобы изменить привычку, не обязательно бороться с ней в лоб. Оставьте прежние сигнал и награду, но подставьте между ними другое действие.", "source": "Чарльз Дахигг, «Сила привычки»", "tags": ["привычки"]}, {"id": "00i103", "title": "Привяжите новую привычку к старой", "text": "Проще всего встроить новое действие сразу после того, что вы и так делаете каждый день. Формула простая: «После того как я [привычное дело], я [новая привычка]». Например: после того как налью утренний кофе, запишу три дела на сегодня.", "source": "Джеймс Клир, «Атомные привычки»", "tags": ["привычки", "приёмы"]}, {"id": "00i104", "title": "Правило двух минут для привычек", "text": "Начало новой привычки должно занимать не больше двух минут. «Читать перед сном» превращается в «прочитать одну страницу», «бегать по утрам» — в «надеть кроссовки». Смысл не в результате, а в том, чтобы научиться начинать: привычку сначала закрепляют и только потом улучшают.", "source": "Джеймс Клир, «Атомные привычки»", "tags": ["привычки", "приёмы"]}, {"id": "00i105", "title": "Среда сильнее силы воли", "text": "Поведение во многом зависит от того, что лежит на виду. Сделайте сигналы хороших привычек заметными: книга на подушке, вода на столе, кроссовки у двери. Сигналы вредных, наоборот, уберите подальше. Перестроить окружение легче, чем каждый день побеждать себя.", "source": "Джеймс Клир, «Атомные привычки»", "tags": ["привычки", "среда"]}, {"id": "00i106", "title": "Сначала решите, кем вы хотите быть", "text": "Самые устойчивые перемены начинаются не с цели, а с представления о себе. Не «хочу пробежать марафон», а «я человек, который не пропускает тренировки». Тогда каждое маленькое действие становится голосом за того, кем вы становитесь.", "source": "Джеймс Клир, «Атомные привычки»", "tags": ["привычки", "идентичность"]}, {"id": "00i107", "title": "Намерение с местом и временем", "text": "Расплывчатое «буду больше заниматься» почти не работает. Надёжнее заранее решить, когда и где вы это сделаете: «в понедельник в семь вечера иду в зал у дома». Исследования намерений реализации показывают, что такой план заметно повышает шансы довести дело до конца.", "source": "Петер Голльвитцер, исследования намерений реализации", "tags": ["привычки", "планирование"]}]}, {"id": "00s2", "title": "Фокус и глубокая работа", "note": "Как беречь внимание и делать сложное без спешки.", "color": 3, "ideas": [{"id": "00i201", "title": "Глубокая работа — редкий и ценный навык", "text": "Глубокая работа — это сосредоточенный труд без отвлечений на пределе умственных возможностей. Именно она создаёт новое и развивает мастерство. Почта, чаты и мелкие задачи дают ощущение занятости, но такую работу легко повторить, и ценится она меньше.", "source": "Кэл Ньюпорт, «В работу с головой»", "tags": ["фокус", "работа"]}, {"id": "00i202", "title": "Остаток внимания", "text": "Переключаясь с одной задачи на другую, вы не переносите внимание целиком: часть его ещё какое-то время остаётся на прежнем деле. Поэтому «быстро заглянуть в почту» посреди сложной работы обходится дороже, чем кажется.", "source": "Софи Лерой, исследование остаточного внимания", "tags": ["фокус", "внимание"]}, {"id": "00i203", "title": "Метод помидора", "text": "Работайте отрезками по 25 минут с пятиминутными перерывами, а после четырёх отрезков отдохните подольше. Таймер снимает вопрос «сколько ещё?» и превращает большую задачу в серию коротких забегов, на каждый из которых легко решиться.", "source": "Франческо Чирилло, техника Pomodoro", "tags": ["фокус", "приёмы"]}, {"id": "00i204", "title": "Состояние потока", "text": "Поток — это полная поглощённость делом, когда время идёт незаметно. Он возникает, если задача чуть сложнее ваших нынешних умений, цель ясна, а результат каждого шага виден сразу. Слишком простая задача вызывает скуку, слишком трудная — тревогу.", "source": "Михай Чиксентмихайи, «Поток»", "tags": ["фокус", "поток"]}, {"id": "00i205", "title": "Закон Паркинсона", "text": "Работа заполняет всё время, которое на неё отпущено. Дайте задаче неделю — она займёт неделю; дайте два часа — и нередко хватит двух часов. Жёсткий, но реалистичный срок помогает отсечь лишнее.", "source": "Сирил Норткот Паркинсон, 1955", "tags": ["время", "работа"]}, {"id": "00i206", "title": "Незаконченное не отпускает", "text": "Незавершённые дела помнятся лучше завершённых и продолжают крутиться в голове. Чтобы освободить внимание, не обязательно всё доделывать. Часто достаточно записать само дело и следующий конкретный шаг по нему.", "source": "Эффект Зейгарник; исследование Масикампо и Баумайстера", "tags": ["внимание", "приёмы"]}]}, {"id": "00s3", "title": "Как учиться и запоминать", "note": "Приёмы, которые помогают знаниям остаться в голове надолго.", "color": 1, "ideas": [{"id": "00i301", "title": "Кривая забывания", "text": "Без повторения новое забывается быстрее всего в первые часы и дни, а потом забывание замедляется. Каждое своевременное повторение делает след в памяти прочнее и отодвигает момент, когда понадобится следующее.", "source": "Герман Эббингауз, «О памяти», 1885", "tags": ["память", "учёба"]}, {"id": "00i302", "title": "Интервальные повторения", "text": "Повторять лучше не подряд, а через растущие промежутки: через день, через несколько дней, через пару недель. Вспомнить с небольшим усилием, когда материал уже начал ускользать, полезнее, чем зубрить всё за один вечер.", "source": "Эффект распределённой практики", "tags": ["память", "приёмы"]}, {"id": "00i303", "title": "Вспоминать полезнее, чем перечитывать", "text": "Перечитывание создаёт иллюзию знания: текст кажется знакомым, а достать его из памяти не получается. Закройте книгу и попробуйте пересказать главное или ответить на вопросы. Сама попытка вспомнить укрепляет память.", "source": "Рёдигер и Карпике, эффект тестирования", "tags": ["память", "учёба"]}, {"id": "00i304", "title": "Метод Фейнмана", "text": "Чтобы проверить, поняли ли вы тему, объясните её простыми словами, будто рассказываете школьнику. Там, где вы запинаетесь или прячетесь за терминами, остались пробелы. Вернитесь к источнику, разберитесь и объясните ещё раз, проще.", "source": "Метод, названный в честь Ричарда Фейнмана", "tags": ["учёба", "понимание"]}, {"id": "00i305", "title": "Желательные трудности", "text": "То, что даётся легко, часто хуже запоминается. Самопроверка, перерывы между занятиями и чередование тем замедляют прогресс сегодня, зато улучшают запоминание надолго. Ощущение лёгкости на занятии — плохой показатель того, что знание останется.", "source": "Роберт Бьорк, концепция желательных трудностей", "tags": ["учёба", "память"]}, {"id": "00i306", "title": "Осознанная практика", "text": "Мастерство растёт не от числа часов, а от их качества. Осознанная практика — это работа над конкретным слабым местом чуть за пределами привычного, с полной концентрацией и быстрой обратной связью. Просто повторять то, что уже получается, почти бесполезно.", "source": "Андерс Эрикссон, «Максимум»", "tags": ["учёба", "мастерство"]}]}, {"id": "00s4", "title": "Ясное мышление", "note": "Ловушки ума и простые инструменты, чтобы в них не попадаться.", "color": 5, "ideas": [{"id": "00i401", "title": "Склонность к подтверждению", "text": "Мы охотнее замечаем и запоминаем то, что подтверждает уже сложившееся мнение, а неудобные факты пропускаем или объясняем. Противоядие — нарочно искать доводы против своей позиции и спрашивать себя: что убедило бы меня в обратном?", "source": "Когнитивные искажения", "tags": ["мышление", "искажения"]}, {"id": "00i402", "title": "Ошибка выжившего", "text": "Мы судим по тем, кто прошёл отбор, и не видим тех, кто выбыл. Во Вторую мировую статистик Абрахам Вальд предложил укреплять самолёты там, где у вернувшихся машин не было пробоин: попадания в эти места просто не давали вернуться.", "source": "Абрахам Вальд", "tags": ["мышление", "искажения"]}, {"id": "00i403", "title": "Невозвратные затраты", "text": "Потраченные время, деньги и силы уже не вернуть, и на следующий шаг они влиять не должны. Важно одно: стоит ли продолжать с учётом будущих выгод и издержек. Вопрос для проверки: начал бы я это сегодня с нуля?", "source": "Поведенческая экономика", "tags": ["мышление", "решения"]}, {"id": "00i404", "title": "Инверсия: думайте от обратного", "text": "Трудную задачу иногда проще решать с конца. Вместо «как добиться успеха?» спросите «что наверняка приведёт к провалу?» и избегайте этого. Не делать глупостей часто надёжнее, чем пытаться быть гениальным.", "source": "Чарли Мангер", "tags": ["мышление", "модели"]}, {"id": "00i405", "title": "Бритва Оккама", "text": "Из объяснений, одинаково хорошо согласующихся с фактами, стоит предпочесть то, которое требует меньше допущений. Это не закон природы, а рабочее правило: начинайте с простой версии и усложняйте её, только когда к этому вынуждают факты.", "source": "Уильям Оккам, XIV век", "tags": ["мышление", "модели"]}, {"id": "00i406", "title": "Бритва Хэнлона", "text": "Не приписывайте злому умыслу то, что вполне объясняется невнимательностью, спешкой или ошибкой. Большинство обид рождается из недоразумений, а не из заговоров. Такое допущение бережёт нервы и отношения.", "source": "Бритва Хэнлона", "tags": ["мышление", "люди"]}, {"id": "00i407", "title": "Эффект Даннинга — Крюгера", "text": "Новичку не хватает знаний не только для хорошей работы, но и для трезвой оценки собственного уровня, поэтому он склонен себя переоценивать. Опытные люди, наоборот, порой недооценивают себя: им кажется, что другим всё даётся так же легко.", "source": "Джастин Крюгер и Дэвид Даннинг, 1999", "tags": ["мышление", "искажения"]}, {"id": "00i408", "title": "Думать от первых принципов", "text": "Вместо рассуждения по аналогии («так делают все») разберите задачу до базовых фактов, в которых вы уверены, и соберите решение заново. Так находятся варианты, которых не видно, пока опираешься на привычные ответы.", "source": "Метод первых принципов", "tags": ["мышление", "модели"]}, {"id": "00i409", "title": "Круг компетентности", "text": "У каждого есть область, в которой он действительно разбирается. Важен не размер этого круга, а знание его границ: серьёзные ошибки чаще всего случаются там, где мы уверенно действуем за его пределами.", "source": "Уоррен Баффет, письмо акционерам, 1996", "tags": ["мышление", "решения"]}]}, {"id": "00s5", "title": "Стоицизм на каждый день", "note": "Мысли Эпиктета, Сенеки и Марка Аврелия о спокойствии и поступках.", "color": 4, "ideas": [{"id": "00i501", "title": "Что в нашей власти", "text": "Одно зависит от нас: суждения, стремления, поступки. Другое не зависит: тело, репутация, чужие решения, прошлое. Спокойствие приходит, когда силы уходят на первое, а второе принимается как данность.", "source": "Эпиктет, «Энхиридион»", "tags": ["стоицизм", "спокойствие"]}, {"id": "00i502", "title": "Нас тревожат не события, а суждения о них", "text": "Людей расстраивают не сами вещи, а то, что они о них думают. Между событием и реакцией стоит оценка, и её можно пересмотреть. Полезный вопрос: что здесь факт, а что моя трактовка?", "source": "Эпиктет, «Энхиридион»", "tags": ["стоицизм", "эмоции"]}, {"id": "00i503", "title": "Заранее представить худшее", "text": "Стоики советовали время от времени мысленно проживать возможные неудачи: потерю, отказ, срыв планов. Это не пессимизм, а тренировка. Беда, продуманная заранее, пугает меньше и реже застаёт врасплох.", "source": "Сенека, «Нравственные письма к Луцилию»", "tags": ["стоицизм", "практика"]}, {"id": "00i504", "title": "Помни о смерти", "text": "Мысль о конечности жизни нужна не для уныния, а для ясности. Марк Аврелий советовал совершать каждое дело так, будто оно последнее в жизни: без суеты, притворства и недовольства своей участью.", "source": "Марк Аврелий, «Размышления»", "tags": ["стоицизм", "время"]}, {"id": "00i505", "title": "Препятствие становится путём", "text": "То, что мешает действию, может стать его материалом: помеха делу продвигает дело. Трудность — это ещё и повод проявить терпение, изобретательность или смелость, которых без неё не понадобилось бы.", "source": "Марк Аврелий, «Размышления»", "tags": ["стоицизм", "трудности"]}, {"id": "00i506", "title": "Воображение мучает сильнее, чем реальность", "text": "Многое из того, чего мы боимся, так и не случается, а случившись, оказывается легче, чем представлялось. Тревога заставляет пережить беду заранее, и нередко впустую.", "source": "Сенека, «Нравственные письма к Луцилию»", "tags": ["стоицизм", "тревога"]}, {"id": "00i507", "title": "Вечерний разбор дня", "text": "Перед сном Сенека перебирал прожитый день: что сделал хорошо, где ошибся, что стоит поправить завтра. Не чтобы себя наказать, а чтобы вовремя заметить и выровнять курс.", "source": "Сенека, «О гневе»", "tags": ["стоицизм", "практика"]}]}, {"id": "00s6", "title": "Решения и приоритеты", "note": "Как выбирать главное и не застревать в сомнениях.", "color": 2, "ideas": [{"id": "00i601", "title": "Принцип Парето", "text": "Примерно 20% усилий дают около 80% результата. Цифры условны, но закономерность встречается часто: немногие клиенты приносят основную часть дохода, немногие задачи — основную пользу. Найдите свои 20% и начните с них.", "source": "Вильфредо Парето, Джозеф Джуран", "tags": ["приоритеты", "модели"]}, {"id": "00i602", "title": "Матрица Эйзенхауэра", "text": "Разложите дела по двум вопросам: это важно? это срочно? Важное и срочное делают сразу. Важное, но несрочное планируют: здесь живут здоровье, учёба и отношения. Срочное, но неважное стараются передать другим, а остальное вычёркивают.", "source": "Матрица Эйзенхауэра", "tags": ["приоритеты", "приёмы"]}, {"id": "00i603", "title": "Дело на две минуты делайте сразу", "text": "Если задача занимает меньше двух минут, выполнить её сейчас быстрее, чем записывать, хранить и возвращаться к ней потом. Всё, что дольше, отправляется в список дел или в календарь.", "source": "Дэвид Аллен, «Как привести дела в порядок»", "tags": ["приоритеты", "приёмы"]}, {"id": "00i604", "title": "Двери в одну и в две стороны", "text": "Решения бывают обратимыми и необратимыми. Обратимые, «двери в обе стороны», стоит принимать быстро: ошибку легко исправить. Необратимые требуют времени и тщательности. Частая ошибка — относиться ко всем решениям как к необратимым.", "source": "Джефф Безос, письмо акционерам Amazon", "tags": ["решения", "модели"]}, {"id": "00i605", "title": "Правило 10–10–10", "text": "Перед трудным решением спросите себя: что я буду думать о нём через 10 минут, через 10 месяцев и через 10 лет? Взгляд из трёх точек во времени помогает отделить сиюминутные эмоции от того, что действительно важно.", "source": "Сьюзи Уэлч, «10-10-10»", "tags": ["решения", "приёмы"]}, {"id": "00i606", "title": "Разбор провала до старта", "text": "Перед запуском проекта представьте, что прошёл год и он провалился. Запишите, почему так вышло. В таком формате проще высказать сомнения, о которых обычно молчат, и заранее прикрыть слабые места.", "source": "Гэри Кляйн, метод premortem", "tags": ["решения", "планирование"]}]}, {"id": "00s07", "title": "Почему затягивает лента", "note": "Как приложения удерживают внимание и что с этим можно сделать.", "color": 7, "ideas": [{"id": "00i0701", "title": "Награда, которую нельзя предсказать", "text": "Сильнее всего привычку закрепляет не постоянная награда, а случайная. Скиннер показал это в опытах с животными: если подкрепление приходит непредсказуемо, действие повторяют дольше и упорнее. Лента устроена так же: никогда не знаешь, окажется ли следующий ролик интересным, и поэтому листаешь дальше.", "source": "Б. Ф. Скиннер, режимы подкрепления", "tags": ["внимание", "привычки"]}, {"id": "00i0702", "title": "У ленты нет конца, и это не случайность", "text": "У книги есть главы, у серии — титры. Такие естественные точки остановки помогают решить, продолжать или нет. Бесконечная прокрутка и автовоспроизведение эти точки убирают, и решение «хватит» приходится принимать самому, без подсказки. Автор бесконечной прокрутки Аза Раскин позже говорил, что сожалеет о её последствиях.", "source": "Аза Раскин; Адам Алтер, «Не оторваться»", "tags": ["внимание", "технологии"]}, {"id": "00i0703", "title": "Хотеть — не значит получать удовольствие", "text": "В мозге за желание и за удовольствие отвечают разные системы. Дофамин связан прежде всего с ожиданием и тягой, а не с самим наслаждением. Поэтому рука может тянуться к телефону снова и снова, хотя удовольствия от очередного получаса в ленте почти нет.", "source": "Кент Берридж, исследования «хочу» и «нравится»", "tags": ["мозг", "внимание"]}, {"id": "00i0704", "title": "Плохие новости цепляют сильнее", "text": "Отрицательное мы замечаем быстрее и помним дольше, чем положительное: для выживания пропустить угрозу было опаснее, чем пропустить приятное. Ленты, которые подбирают то, на что мы сильнее реагируем, легко заполняются тревожным и возмущающим. Это особенность внимания, а не точная картина мира.", "source": "Рой Баумайстер и соавторы, «Плохое сильнее хорошего», 2001", "tags": ["внимание", "новости"]}, {"id": "00i0705", "title": "Сделайте вредное неудобным", "text": "Чем меньше шагов до действия, тем чаще мы его совершаем. Это работает в обе стороны. Уберите приложение с первого экрана, выйдите из аккаунта, отключите уведомления: каждая лишняя секунда даёт шанс заметить, что вы делаете. А на освободившееся место поставьте то, чем хотите заниматься вместо этого.", "source": "Принцип трения в дизайне привычек", "tags": ["привычки", "приёмы"]}, {"id": "00i0706", "title": "Скука — не поломка", "text": "Когда нечем заняться, ум начинает блуждать: вспоминает, строит планы, связывает далёкие мысли. В исследованиях людям, которых сначала заставили поскучать, потом удавалось придумать больше необычных идей. Если каждую паузу занимать телефоном, у этого режима просто не остаётся времени.", "source": "Сэнди Манн и Ребекка Кэдман, исследование скуки и креативности, 2014", "tags": ["внимание", "креативность"]}]}, {"id": "00s08", "title": "Деньги без паники", "note": "Базовые идеи о личных финансах, которые полезно знать каждому.", "color": 1, "ideas": [{"id": "00i0801", "title": "Сложный процент и правило 72", "text": "Когда доход начисляется и на вложенное, и на уже заработанные проценты, сумма растёт всё быстрее. Прикинуть срок удвоения помогает правило 72: разделите 72 на годовую ставку. При 8% годовых деньги удваиваются примерно за 9 лет, при 12% — за 6. По тому же правилу растут и долги.", "source": "Правило 72", "tags": ["деньги", "проценты"]}, {"id": "00i0802", "title": "Инфляция съедает молча", "text": "Деньги, которые просто лежат, со временем покупают всё меньше. При инфляции 6% в год цены удваиваются примерно за 12 лет: та же сумма превращается в половину прежней покупательной способности. Поэтому важно смотреть не на сам процент дохода, а на то, насколько он обгоняет рост цен.", "source": "Основы личных финансов", "tags": ["деньги", "инфляция"]}, {"id": "00i0803", "title": "Подушка безопасности", "text": "Запас на три-шесть месяцев обычных расходов превращает потерю работы, болезнь или срочный ремонт из катастрофы в неприятность. Его смысл не в доходности, а в доступности: эти деньги должны лежать там, откуда их можно быстро забрать без потерь.", "source": "Основы личных финансов", "tags": ["деньги", "запас"]}, {"id": "00i0804", "title": "Сначала заплати себе", "text": "Откладывать то, что останется в конце месяца, обычно не получается: не остаётся ничего. Надёжнее перевернуть порядок: в день дохода сразу отправить фиксированную долю в накопления, а жить на остальное. В классической книге о деньгах советуют начинать с десятой части.", "source": "Джордж Клейсон, «Самый богатый человек в Вавилоне»", "tags": ["деньги", "привычки"]}, {"id": "00i0805", "title": "Расходы растут вслед за доходами", "text": "После повышения зарплаты прежняя жизнь быстро начинает казаться слишком скромной: жильё получше, такси почаще, подписок побольше. Через год свободных денег столько же, сколько было. Простой приём: при каждом росте дохода сразу направлять часть прибавки в накопления, пока к ней не привыкли.", "source": "Инфляция образа жизни", "tags": ["деньги", "привычки"]}, {"id": "00i0806", "title": "Цена вещи в часах жизни", "text": "Любую покупку можно пересчитать в часы работы. Разделите цену на то, сколько вы реально получаете за час после налогов и расходов на саму работу. Кроссовки ценой в три рабочих дня воспринимаются иначе, чем кроссовки за какую-то сумму. Такой пересчёт помогает понять, стоит ли вещь своего времени.", "source": "Вики Робин и Джо Домингес, «Кошелёк или жизнь?»", "tags": ["деньги", "решения"]}]}, {"id": "00s09", "title": "Сон и энергия", "note": "Что известно о сне и бодрости и как этим пользоваться.", "color": 6, "ideas": [{"id": "00i0901", "title": "Сколько сна нужно взрослому", "text": "Большинству взрослых нужно от семи до девяти часов сна в сутки. Недосып накапливается незаметно: человек привыкает к усталости и перестаёт её замечать, хотя внимание и память при этом работают хуже. Ощущение «мне хватает пяти часов» чаще говорит о привычке, чем о настоящей норме.", "source": "Рекомендации Национального фонда сна (США)", "tags": ["сон", "здоровье"]}, {"id": "00i0902", "title": "Режим важнее подвигов", "text": "Внутренние часы любят постоянство. Если ложиться и вставать примерно в одно время, включая выходные, засыпать становится легче, а просыпаться бодрее. Попытка отоспаться в субботу до обеда сдвигает часы, и в понедельник организм чувствует себя как после перелёта.", "source": "Тилль Рённеберг, «социальный джетлаг»", "tags": ["сон", "режим"]}, {"id": "00i0903", "title": "Свет настраивает внутренние часы", "text": "Главный сигнал для биологических часов — свет. Яркий свет утром, лучше всего дневной, помогает проснуться и сдвигает засыпание на более раннее время. Яркий свет поздно вечером делает обратное: подавляет выработку мелатонина и отодвигает сон.", "source": "Хронобиология: влияние света на циркадные ритмы", "tags": ["сон", "свет"]}, {"id": "00i0904", "title": "Кофеин действует дольше, чем кажется", "text": "Кофеин блокирует рецепторы аденозина, вещества, которое накапливается за день и вызывает сонливость. Через пять-шесть часов в крови остаётся ещё около половины выпитой дозы. Чашка кофе в четыре часа дня может мешать глубокому сну, даже если заснуть получилось без труда.", "source": "Физиология сна: кофеин и аденозин", "tags": ["сон", "кофеин"]}, {"id": "00i0905", "title": "Короткий дневной сон", "text": "Десять-двадцать минут дремоты днём заметно возвращают бодрость и внимание. Если проспать дольше, можно уйти в глубокий сон и проснуться разбитым: это состояние называют инерцией сна. Лучшее время для короткого сна — вскоре после обеда, чтобы не помешать ночному.", "source": "Исследования дневного сна (Брукс и Лэк, 2006)", "tags": ["сон", "энергия"]}, {"id": "00i0906", "title": "Движение как минимум", "text": "Всемирная организация здравоохранения рекомендует взрослым 150–300 минут умеренной активности в неделю, например быстрой ходьбы, или 75–150 минут интенсивной. Это около получаса в день пять раз в неделю. Польза начинается раньше нормы: любое движение лучше, чем его отсутствие.", "source": "Рекомендации ВОЗ по физической активности, 2020", "tags": ["здоровье", "движение"]}]}, {"id": "00s10", "title": "Как устроены люди", "note": "Открытия социальной психологии о том, как мы видим себя и других.", "color": 2, "ideas": [{"id": "00i1001", "title": "Фундаментальная ошибка атрибуции", "text": "Чужие поступки мы объясняем характером, а свои — обстоятельствами. Водитель, который подрезал, «хам»; а если подрезал я, то «опаздывал и не заметил». Прежде чем делать вывод о человеке, стоит спросить: в какой ситуации я сам поступил бы так же?", "source": "Ли Росс, 1977", "tags": ["психология", "люди"]}, {"id": "00i1002", "title": "Эффект прожектора", "text": "Нам кажется, что окружающие замечают наши промахи и внешность гораздо внимательнее, чем это происходит на деле. В эксперименте студенты в нелепой футболке были уверены, что её запомнит половина аудитории, а запомнила примерно четверть. Люди заняты в основном собой, как и мы.", "source": "Томас Гилович и соавторы, 2000", "tags": ["психология", "тревога"]}, {"id": "00i1003", "title": "Эффект свидетеля", "text": "Чем больше людей видят, что кому-то нужна помощь, тем меньше вероятность, что поможет каждый из них. Ответственность как будто делится на всех, и каждый ждёт, что вмешается другой. Если помощь нужна вам, обращайтесь к конкретному человеку: «Вы, в синей куртке, вызовите скорую».", "source": "Джон Дарли и Бибб Латане, 1968", "tags": ["психология", "люди"]}, {"id": "00i1004", "title": "Давление большинства", "text": "В опытах Соломона Аша участники сравнивали длину линий, и ответ был очевиден. Но когда подставная группа единогласно называла неверный вариант, около трёх четвертей участников хотя бы раз соглашались с ней вопреки собственным глазам. Достаточно было одного несогласного союзника, чтобы давление резко ослабло.", "source": "Соломон Аш, 1951", "tags": ["психология", "группа"]}, {"id": "00i1005", "title": "Эффект ореола", "text": "Одно яркое качество окрашивает всё впечатление о человеке. Привлекательного мы невольно считаем более умным и добрым, уверенного — более компетентным. То же работает с вещами и компаниями. Полезно оценивать качества по отдельности: что я знаю об этом на самом деле, а что дорисовал?", "source": "Эдвард Торндайк, 1920", "tags": ["психология", "искажения"]}, {"id": "00i1006", "title": "Запоминаются пик и финал", "text": "Оценивая прошедшее событие, мы не усредняем все его минуты. В памяти остаются самый сильный момент и то, чем всё закончилось, а длительность почти не важна. Отпуск, встречу или презентацию стоит планировать так, чтобы в них был яркий момент и хороший конец.", "source": "Даниэль Канеман, правило «пик — конец»", "tags": ["психология", "память"]}]}, {"id": "00s11", "title": "Разговор и влияние", "note": "Приёмы, которые помогают слушать, договариваться и говорить о трудном.", "color": 4, "ideas": [{"id": "00i1101", "title": "Сначала понять, потом быть понятым", "text": "В споре мы обычно слушаем, чтобы ответить, а не чтобы понять. Попробуйте сначала пересказать позицию собеседника так, чтобы он сказал «да, именно». После этого люди заметно охотнее слушают в ответ: их услышали, и защищаться больше незачем.", "source": "Стивен Кови, «7 навыков высокоэффективных людей»", "tags": ["общение", "слушание"]}, {"id": "00i1102", "title": "Я-сообщения", "text": "Фраза «Ты опять опоздал» звучит как обвинение и вызывает оборону. Фраза «Я волнуюсь, когда не знаю, во сколько ты придёшь» описывает то же самое через собственные чувства. Формула: что произошло, что я чувствую, чего прошу. Спорить с чужими чувствами труднее, чем с упрёком.", "source": "Томас Гордон", "tags": ["общение", "конфликты"]}, {"id": "00i1103", "title": "Четыре шага ненасильственного общения", "text": "Чтобы сказать о трудном без нападения, разделите сообщение на четыре части. Наблюдение: факт без оценок. Чувство: что я испытываю. Потребность: что для меня здесь важно. Просьба: конкретное действие, о котором я прошу. Например: «Когда встреча начинается позже, я нервничаю, мне важно планировать день. Давай предупреждать заранее».", "source": "Маршалл Розенберг, «Ненасильственное общение»", "tags": ["общение", "конфликты"]}, {"id": "00i1104", "title": "Назовите чувство вслух", "text": "Когда собеседник раздражён или расстроен, спорить с эмоцией бесполезно. Лучше её назвать: «Похоже, вас это сильно задело». Переговорщики называют приём обозначением эмоций. Человек чувствует, что его поняли, напряжение снижается, и разговор возвращается к сути.", "source": "Крис Восс, «Никаких компромиссов»", "tags": ["переговоры", "эмоции"]}, {"id": "00i1105", "title": "Запасной вариант в переговорах", "text": "Сила в переговорах зависит от того, что вы будете делать, если договориться не получится. Этот запасной вариант называют BATNA, лучшей альтернативой соглашению. Продумайте его заранее: тогда понятно, на каких условиях стоит соглашаться, а когда спокойно встать и уйти.", "source": "Роджер Фишер и Уильям Юри, «Переговоры без поражения»", "tags": ["переговоры", "решения"]}, {"id": "00i1106", "title": "Обратная связь по трём шагам", "text": "Замечание «ты безответственный» обижает и ничего не меняет. Полезнее описать три вещи: ситуацию, поведение и его последствия. «Вчера на встрече ты дважды перебил клиента, и он перестал задавать вопросы». Человек понимает, что именно произошло и почему это важно, и не слышит оценки своей личности.", "source": "Модель SBI, Центр креативного лидерства", "tags": ["общение", "работа"]}]}, {"id": "00s12", "title": "Мысленные эксперименты", "note": "Короткие истории, которыми философы проверяют наши убеждения.", "color": 5, "ideas": [{"id": "00i1201", "title": "Корабль Тесея", "text": "Афиняне хранили корабль Тесея и по мере износа заменяли в нём доски. Когда заменили последнюю, остался ли это тот же корабль? А если собрать второй из старых досок, какой из двух настоящий? Вопрос касается и нас: клетки тела обновляются, взгляды меняются, а мы считаем себя тем же человеком.", "source": "Плутарх, «Сравнительные жизнеописания»", "tags": ["философия", "идентичность"]}, {"id": "00i1202", "title": "Пещера Платона", "text": "Узники с рождения сидят в пещере лицом к стене и видят только тени предметов, которые проносят у них за спиной. Тени они считают реальностью. Тот, кто выберется наружу и увидит солнце, не сможет объяснить остальным, что они ошибаются. Платон спрашивает: какие наши «очевидности» — всего лишь тени?", "source": "Платон, «Государство»", "tags": ["философия", "познание"]}, {"id": "00i1203", "title": "Проблема вагонетки", "text": "Вагонетка несётся на пятерых. Можно перевести стрелку, и тогда погибнет один. Большинство считает это допустимым. Но если тех же пятерых можно спасти, только столкнув человека с моста, почти все отказываются. Итог одинаков, а ощущение разное: значит, мы судим поступки не только по последствиям.", "source": "Филиппа Фут, 1967; Джудит Томсон", "tags": ["философия", "этика"]}, {"id": "00i1204", "title": "Завеса неведения", "text": "Представьте, что вы придумываете правила для общества, но не знаете, кем в нём окажетесь: богатым или бедным, здоровым или больным, каким по полу и происхождению. Джон Ролз считал, что справедливы те правила, которые мы выбрали бы в таком положении. Это удобный тест для любого спорного решения.", "source": "Джон Ролз, «Теория справедливости», 1971", "tags": ["философия", "справедливость"]}, {"id": "00i1205", "title": "Китайская комната", "text": "Человек, не знающий китайского, сидит в комнате с подробной инструкцией: какие иероглифы выдавать в ответ на какие. Снаружи кажется, что в комнате понимают китайский. Джон Сёрл спрашивает: понимает ли здесь кто-нибудь язык? Так он оспаривал идею, что правильные ответы машины равны пониманию.", "source": "Джон Сёрл, 1980", "tags": ["философия", "сознание"]}, {"id": "00i1206", "title": "Машина опыта", "text": "Вам предлагают подключиться к машине, которая создаст любые переживания: успех, любовь, приключения. Отличить их от реальности будет нельзя. Подключитесь ли вы навсегда? Большинство отвечает «нет». Роберт Нозик делал вывод: нам важны не только приятные ощущения, но и то, чтобы жизнь была настоящей.", "source": "Роберт Нозик, «Анархия, государство и утопия», 1974", "tags": ["философия", "счастье"]}]}, {"id": "00s13", "title": "Космос и масштаб", "note": "Факты о Вселенной, после которых привычные расстояния кажутся другими.", "color": 3, "ideas": [{"id": "00i1301", "title": "Смотреть в небо — значит смотреть в прошлое", "text": "Свет летит быстро, но не мгновенно. От Солнца до нас он добирается чуть больше восьми минут, от ближайшей звезды — больше четырёх лет, от галактики Андромеды — около двух с половиной миллионов лет. Мы видим не то, что есть сейчас, а то, каким всё было, когда свет отправился в путь.", "source": "Астрономия: скорость света и расстояния", "tags": ["космос", "свет"]}, {"id": "00i1302", "title": "Космический календарь", "text": "Если сжать 13,8 миллиарда лет истории Вселенной в один год, Солнечная система появится в начале сентября, динозавры — в последних числах декабря, а люди современного типа — за несколько минут до полуночи 31 декабря. Вся записанная история уместится в последние секунды.", "source": "Карл Саган, «Драконы Эдема»", "tags": ["космос", "время"]}, {"id": "00i1303", "title": "Мы сделаны из звёзд", "text": "После Большого взрыва во Вселенной были почти только водород и гелий. Углерод, кислород, железо и другие тяжёлые элементы возникли позже: в недрах звёзд и при их гибели. Атомы, из которых состоит наше тело, когда-то были частью звезды.", "source": "Звёздный нуклеосинтез", "tags": ["космос", "химия"]}, {"id": "00i1304", "title": "Бледно-голубая точка", "text": "В 1990 году аппарат «Вояджер-1» с расстояния около шести миллиардов километров сфотографировал Землю. На снимке она занимает меньше пикселя: светлая точка в солнечном луче. Карл Саган заметил, что на этой точке прошла жизнь каждого, о ком мы когда-либо слышали.", "source": "Снимок «Вояджера-1», 1990; Карл Саган", "tags": ["космос", "перспектива"]}, {"id": "00i1305", "title": "Почти вся масса — в Солнце", "text": "На Солнце приходится около 99,8% всей массы Солнечной системы. Юпитер тяжелее всех остальных планет вместе взятых, но и он лишь примерно тысячная доля Солнца. По объёму в Солнце поместилось бы больше миллиона таких планет, как Земля.", "source": "Астрономия: Солнечная система", "tags": ["космос", "масштаб"]}, {"id": "00i1306", "title": "Парадокс Ферми", "text": "В нашей Галактике сотни миллиардов звёзд, и у многих есть планеты. За миллиарды лет разумная жизнь могла бы возникнуть много раз и заметно себя проявить. Но следов её мы не видим. «Где все?» — спросил физик Энрико Ферми в 1950 году. Объяснений предложены десятки, общепринятого нет.", "source": "Энрико Ферми, 1950", "tags": ["космос", "жизнь"]}]}, {"id": "00s14", "title": "Экономика на пальцах", "note": "Несколько идей, которыми экономисты объясняют повседневные решения.", "color": 0, "ideas": [{"id": "00i1401", "title": "Альтернативная стоимость", "text": "Настоящая цена выбора — это лучшее из того, от чего пришлось отказаться. Вечер за сериалом стоит не ноль рублей, а несостоявшуюся встречу, тренировку или сон. Вопрос «что я мог бы сделать вместо этого?» полезнее, чем вопрос «могу ли я себе это позволить?».", "source": "Базовое понятие экономики", "tags": ["экономика", "решения"]}, {"id": "00i1402", "title": "Закон Гудхарта", "text": "Когда показатель становится целью, он перестаёт быть хорошим показателем. Если учителей оценивать по баллам тестов, они начнут натаскивать на тесты; если программистов — по числу строк, код станет длиннее. Люди оптимизируют то, что измеряют, а не то, ради чего измерение придумали.", "source": "Чарльз Гудхарт, 1975", "tags": ["экономика", "стимулы"]}, {"id": "00i1403", "title": "Трагедия общин", "text": "Если ресурс общий и бесплатный, каждому выгодно взять побольше: выгода достаётся одному, а ущерб делится на всех. В итоге пастбище вытоптано, а рыба выловлена. Но это не приговор: Элинор Остром показала, что сообщества часто сами договариваются о правилах и успешно берегут общее.", "source": "Гаррет Хардин, 1968; Элинор Остром", "tags": ["экономика", "общество"]}, {"id": "00i1404", "title": "Сравнительное преимущество", "text": "Торговать выгодно, даже если один участник лучше другого во всём. Юристу, который печатает быстрее своего помощника, всё равно стоит отдать набор текста помощнику: час юридической работы приносит больше. Каждому лучше делать то, в чём его преимущество самое большое, и меняться результатами.", "source": "Давид Рикардо, 1817", "tags": ["экономика", "торговля"]}, {"id": "00i1405", "title": "Рынок «лимонов»", "text": "Когда продавец знает о товаре больше покупателя, рынок портится. Покупатель подержанной машины не может отличить хорошую от плохой и готов платить только среднюю цену. Владельцам хороших машин такая цена невыгодна, они уходят, и средний уровень падает ещё ниже. Гарантии, отзывы и проверки существуют, чтобы эту проблему решать.", "source": "Джордж Акерлоф, 1970", "tags": ["экономика", "информация"]}, {"id": "00i1406", "title": "Убывающая предельная полезность", "text": "Каждая следующая единица одного и того же радует меньше предыдущей. Первый кусок пиццы после долгого дня прекрасен, пятый уже в тягость. С деньгами похоже: прибавка в одну и ту же сумму много значит при небольшом доходе и почти незаметна при большом.", "source": "Базовое понятие экономики", "tags": ["экономика", "решения"]}]}, {"id": "00s15", "title": "Как делались открытия", "note": "Истории о том, как наблюдательность и упрямство меняли науку.", "color": 6, "ideas": [{"id": "00i1501", "title": "Земмельвейс и чистые руки", "text": "В 1847 году венский врач Игнац Земмельвейс заметил, что в отделении, где роды принимали студенты-медики, приходившие после вскрытий, женщины умирали гораздо чаще. Он велел мыть руки раствором хлорной извести, и смертность упала в несколько раз. Коллеги идею отвергли. Признали её только после его смерти.", "source": "История медицины", "tags": ["наука", "медицина"]}, {"id": "00i1502", "title": "Джон Сноу и водяная колонка", "text": "В 1854 году в Лондоне вспыхнула холера. Считалось, что болезнь разносит дурной воздух. Врач Джон Сноу нанёс случаи смерти на карту и увидел, что они собраны вокруг одной водяной колонки на Брод-стрит. По его настоянию с колонки сняли рукоять. Так появился один из первых примеров эпидемиологии.", "source": "История медицины", "tags": ["наука", "медицина"]}, {"id": "00i1503", "title": "Пенициллин: случайность и подготовленный ум", "text": "В 1928 году Александр Флеминг вернулся из отпуска и увидел, что в одну из чашек с бактериями попала плесень, а вокруг неё бактерии погибли. Многие просто выбросили бы испорченную чашку. Флеминг стал разбираться. До лекарства открытие довели Говард Флори и Эрнст Чейн больше десяти лет спустя.", "source": "История медицины", "tags": ["наука", "случайность"]}, {"id": "00i1504", "title": "Эратосфен измерил Землю тенью", "text": "В III веке до нашей эры Эратосфен знал, что в Сиене в полдень летнего солнцестояния солнце стоит прямо над головой, а в Александрии в это же время предметы отбрасывают тень. Измерив её угол и зная расстояние между городами, он вычислил окружность Земли. Результат оказался удивительно близок к настоящему.", "source": "История науки", "tags": ["наука", "геометрия"]}, {"id": "00i1505", "title": "Врач, который выпил бактерии", "text": "В начале 1980-х считалось, что язву желудка вызывают стресс и кислота. Австралийцы Барри Маршалл и Робин Уоррен подозревали бактерию Helicobacter pylori, но им не верили. Тогда Маршалл выпил культуру бактерий и заболел гастритом. Позже язву стали лечить антибиотиками, а учёные получили Нобелевскую премию.", "source": "Нобелевская премия по физиологии и медицине, 2005", "tags": ["наука", "медицина"]}, {"id": "00i1506", "title": "Вегенер и дрейф континентов", "text": "В 1912 году метеоролог Альфред Вегенер предположил, что материки когда-то были единым целым и разошлись: слишком хорошо совпадают берега Африки и Южной Америки, породы и ископаемые по обе стороны океана. Объяснить, что двигает континенты, он не мог, и идею полвека отвергали. Её подтвердила теория тектоники плит.", "source": "История геологии", "tags": ["наука", "геология"]}]}, {"id": "00s16", "title": "Как работает ИИ", "note": "Что происходит внутри языковых моделей вроде Claude и ChatGPT.", "color": 3, "ideas": [{"id": "00i1601", "title": "Модель угадывает продолжение", "text": "Языковая модель делает одну вещь: по уже написанному тексту оценивает, какой фрагмент вероятнее всего идёт следующим. Ответ собирается по кусочку, шаг за шагом. Удивительно, но этого умения достаточно, чтобы писать код, переводить и рассуждать: чтобы хорошо продолжать тексты о мире, нужно многое о мире усвоить.", "source": "Устройство языковых моделей", "tags": ["ии", "технологии"]}, {"id": "00i1602", "title": "Токены, а не слова", "text": "Модель работает не с буквами и не со словами, а с токенами: частыми кусочками текста. Короткое слово может быть одним токеном, длинное или редкое — несколькими. В токенах измеряют и длину запроса, и объём памяти модели в одном разговоре, который называют контекстным окном.", "source": "Устройство языковых моделей", "tags": ["ии", "технологии"]}, {"id": "00i1603", "title": "Обучение — это подбор чисел", "text": "Внутри модели миллиарды чисел, параметров. При обучении ей показывают огромное количество текстов и просят предсказывать продолжение, а после каждой ошибки параметры чуть-чуть поправляют в нужную сторону. Никто не пишет правила вручную: знания о языке и мире оседают в этих числах сами.", "source": "Устройство языковых моделей", "tags": ["ии", "обучение"]}, {"id": "00i1604", "title": "Почему ИИ уверенно ошибается", "text": "Модель обучена выдавать правдоподобный текст, а правдоподобное не всегда верно. Если точного знания нет, она может сочинить убедительную цитату, ссылку или цифру. Такие ошибки называют галлюцинациями. Важные факты, особенно числа, имена и источники, стоит перепроверять.", "source": "Устройство языковых моделей", "tags": ["ии", "критичность"]}, {"id": "00i1605", "title": "Внимание — механизм, а не метафора", "text": "Современные модели построены на архитектуре «трансформер», предложенной в 2017 году. Её ключевая часть называется механизмом внимания: обрабатывая каждое слово, модель взвешивает, какие другие слова текста для него важны. Так она связывает местоимение с именем из начала абзаца или вопрос с нужным местом в документе.", "source": "Васвани и соавторы, «Attention Is All You Need», 2017", "tags": ["ии", "технологии"]}, {"id": "00i1606", "title": "Хороший запрос — это хорошее объяснение", "text": "Модель не знает вашей ситуации, пока вы о ней не рассказали. Ответы становятся лучше, если объяснить, кто вы, что нужно получить, для кого и в каком виде, и дать пример. Помогает простая проверка: понял бы эту просьбу умный человек, который видит её впервые?", "source": "Практика работы с языковыми моделями", "tags": ["ии", "приёмы"]}]}];
+</script>
+<script>
+/* Суть — личная картотека коротких идей.
+   Данные лежат в облачном хранилище страницы (когда её открывает владелец по ссылке в Claude)
+   или в localStorage браузера (локальная копия index.html). Внешних зависимостей нет. */
+(function () {
+  'use strict';
+
+  const doc = document;
+  const root = doc.documentElement;
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  const DAY_RE = /^\d{4}-\d{2}-\d{2}$/;
+  const ID_RE = /^[a-z0-9][a-z0-9-]{1,48}$/;
+  const LS_KEY = 'sut.v1';
+  const PAGE = 1000;
+  const MARKERS = ['Жёлтый', 'Зелёный', 'Розовый', 'Голубой', 'Оранжевый', 'Сиреневый', 'Мятный', 'Коралловый'];
+  const WEEKDAYS = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
+
+  const env = { hosted: false, sample: null, downloads: null, installEvent: null, updateReady: false };
+
+  const appEl = doc.getElementById('app');
+  const railEl = doc.getElementById('rail');
+  const stageEl = doc.getElementById('stage');
+  const noticeEl = doc.getElementById('notice');
+  const viewEl = doc.getElementById('viewbody');
+  const tabbarEl = doc.getElementById('tabbar');
+  const layersEl = doc.getElementById('layers');
+  const toastsEl = doc.getElementById('toasts');
+  const sourcesEl = doc.getElementById('dl-sources');
+
+  /* ───────── DOM ───────── */
+  // Все данные попадают на страницу только как текстовые узлы и атрибуты, без innerHTML.
+  function h(tag, props) {
+    const el = doc.createElement(tag);
+    let value = null;
+    if (props) {
+      for (const k in props) {
+        const v = props[k];
+        if (v == null || v === false) continue;
+        if (k === 'class') el.className = v;
+        else if (k === 'text') el.textContent = v;
+        else if (k === 'value') value = v;
+        else if (k === 'style') { for (const s in v) el.style.setProperty(s, v[s]); }
+        else if (k.slice(0, 2) === 'on' && typeof v === 'function') el.addEventListener(k.slice(2), v);
+        else el.setAttribute(k, v === true ? '' : v);
+      }
+    }
+    for (let i = 2; i < arguments.length; i++) add(el, arguments[i]);
+    if (value != null) el.value = value;
+    return el;
+  }
+  function add(el, kid) {
+    if (kid == null || kid === false || kid === true) return;
+    if (Array.isArray(kid)) { for (const k of kid) add(el, k); return; }
+    el.appendChild(kid.nodeType ? kid : doc.createTextNode(String(kid)));
+  }
+  function fill(el) {
+    el.textContent = '';
+    for (let i = 1; i < arguments.length; i++) add(el, arguments[i]);
+    return el;
+  }
+
+  const ICONS = {
+    sun: 'M12 4V2M12 22v-2M4 12H2M22 12h-2M6.3 6.3 4.9 4.9M19.1 19.1l-1.4-1.4M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',
+    cards: 'M7 4h10a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM8 20.5h8',
+    chart: 'M5 20v-8M12 20V5M19 20v-11',
+    plus: 'M12 5v14M5 12h14',
+    minus: 'M5 12h14',
+    heart: 'M12 20.5s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.6a4.3 4.3 0 0 1 7.5 2.7c0 5.6-7.5 10.2-7.5 10.2z',
+    close: 'M6 6l12 12M18 6 6 18',
+    left: 'M15 5l-7 7 7 7',
+    right: 'M9 5l7 7-7 7',
+    more: { d: 'M5 12h.01M12 12h.01M19 12h.01', w: '3' },
+    search: 'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4',
+    edit: 'M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4',
+    trash: 'M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v5M14 11v5',
+    copy: 'M9 9h10a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V10a1 1 0 0 1 1-1zM5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1',
+    play: 'M8 5.5v13l11-6.5-11-6.5z',
+    spark: 'M12 3l1.8 4.9L19 9.7l-5.2 1.8L12 17l-1.8-5.5L5 9.7l5.2-1.8L12 3zM19 16v4M17 18h4',
+    check: 'M5 12.5l4.5 4.5L19 7.5',
+    down: 'M12 4v11M7 11l5 5 5-5M5 20h14',
+    up: 'M12 20V9M7 13l5-5 5 5M5 4h14',
+    flame: 'M12 3c.5 3 4.5 5 4.5 9.5a4.5 4.5 0 0 1-9 0c0-1.7.7-3 1.7-4 .3 1.4 1 2.2 1.8 2.4C10.6 8.3 10.9 5.5 12 3z',
+    stop: 'M7 7h10v10H7z',
+    ban: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM5.7 5.7l12.6 12.6',
+    info: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 11v5M12 8h.01',
+  };
+  function icon(name, size) {
+    const def = ICONS[name];
+    const simple = typeof def === 'string';
+    const svg = doc.createElementNS(SVG_NS, 'svg');
+    const set = (k, v) => svg.setAttribute(k, v);
+    set('viewBox', '0 0 24 24'); set('width', size || 22); set('height', size || 22);
+    set('fill', 'none'); set('stroke', 'currentColor'); set('stroke-width', simple ? '1.8' : def.w);
+    set('stroke-linecap', 'round'); set('stroke-linejoin', 'round'); set('aria-hidden', 'true');
+    const p = doc.createElementNS(SVG_NS, 'path');
+    p.setAttribute('d', simple ? def : def.d);
+    svg.appendChild(p);
+    return svg;
+  }
+  function btn(label, onClick, cls, iconName) {
+    const after = iconName === 'right';
+    return h('button', { class: 'btn ' + (cls || ''), type: 'button', onclick: () => onClick() },
+      iconName && !after ? icon(iconName, 18) : null, label, after ? icon(iconName, 18) : null);
+  }
+  function iconBtn(name, label, onClick, cls) {
+    return h('button', { class: 'iconbtn' + (cls ? ' ' + cls : ''), type: 'button', 'aria-label': label, title: label, onclick: () => onClick() }, icon(name, 22));
+  }
+  function field(label, control, extra, forId) {
+    return h('div', { class: 'field' },
+      h('div', { class: 'field-head' }, h('label', { class: 'label', for: forId || control.id, text: label }), extra || null),
+      control);
+  }
+  function segmented(options, get, set, cls) {
+    const buttons = options.map((o) => h('button', { type: 'button', onclick: () => { if (get() !== o[0]) set(o[0]); } }, o[1]));
+    const el = h('div', { class: 'seg' + (cls ? ' ' + cls : ''), role: 'group' }, buttons);
+    const update = () => buttons.forEach((b, i) => b.setAttribute('aria-pressed', String(get() === options[i][0])));
+    update();
+    return { el, update };
+  }
+
+  /* ───────── мелочи ───────── */
+  const pad2 = (n) => (n < 10 ? '0' : '') + n;
+  const dayKey = (d) => d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+  const todayKey = () => dayKey(new Date());
+  const keyToDate = (k) => { const p = k.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); };
+  const addDays = (k, n) => { const d = keyToDate(k); d.setDate(d.getDate() + n); return dayKey(d); };
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  const plain = (x) => JSON.parse(JSON.stringify(x));
+  const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+  const norm = (s) => s.toLowerCase().replace(/ё/g, 'е');
+
+  function plural(n, one, few, many) {
+    const a = Math.abs(n) % 100, b = a % 10;
+    if (a > 10 && a < 20) return many;
+    if (b === 1) return one;
+    if (b >= 2 && b <= 4) return few;
+    return many;
+  }
+  const nIdeas = (n) => n + ' ' + plural(n, 'идея', 'идеи', 'идей');
+  const nIdeasAcc = (n) => n + ' ' + plural(n, 'идею', 'идеи', 'идей');
+  const nDays = (n) => n + ' ' + plural(n, 'день', 'дня', 'дней');
+
+  function str(v, max) { return (typeof v === 'string' ? v : v == null ? '' : String(v)).slice(0, max); }
+  function num(v) { v = Number(v); return Number.isFinite(v) && v > 0 ? v : 0; }
+  function clampInt(v, lo, hi) { v = Math.round(Number(v)); return Number.isFinite(v) ? Math.min(hi, Math.max(lo, v)) : lo; }
+  function snippet(s, n) { s = s.replace(/\s+/g, ' ').trim(); return s.length > n ? s.slice(0, n - 1).trimEnd() + '…' : s; }
+  function hash32(s) { let x = 2166136261; for (let i = 0; i < s.length; i++) { x ^= s.charCodeAt(i); x = Math.imul(x, 16777619); } return x >>> 0; }
+  function isObj(x) { return x !== null && typeof x === 'object' && !Array.isArray(x); }
+  function deepMerge(a, b) {
+    const out = Object.assign({}, a);
+    for (const k in b) out[k] = isObj(out[k]) && isObj(b[k]) ? deepMerge(out[k], b[k]) : b[k];
+    return out;
+  }
+  function hostOf(url) { try { return new URL(url).hostname.replace(/^www\./, ''); } catch (e) { return url; } }
+
+  let idCounter = Math.floor(Math.random() * 1296);
+  function newId() {   // идентификаторы растут со временем, поэтому сортируются по порядку создания
+    idCounter = (idCounter + 1) % 1296;
+    return Date.now().toString(36).padStart(9, '0') + idCounter.toString(36).padStart(2, '0') + Math.floor(Math.random() * 46656).toString(36).padStart(3, '0');
+  }
+  function parseTags(v) {
+    const out = [];
+    (Array.isArray(v) ? v : String(v || '').split(/[,;\n]/)).forEach((t) => {
+      t = str(t, 40).trim().toLowerCase().replace(/^#+/, '').trim().slice(0, 30);
+      if (t && !out.includes(t)) out.push(t);
+    });
+    return out.slice(0, 8);
+  }
+
+  /* ───────── модель ───────── */
+  function normIdea(raw, id) {
+    raw = raw || {};
+    const url = str(raw.url, 500).trim();
+    return {
+      id: id,
+      title: str(raw.title, 200).trim(),
+      text: str(raw.text, 6000).trim(),
+      source: str(raw.source, 200).trim(),
+      url: /^https?:\/\/\S+$/i.test(url) ? url : '',
+      stash: str(raw.stash, 64),
+      tags: parseTags(raw.tags),
+      fav: !!raw.fav,     // «зацепило»
+      skip: !!raw.skip,   // «не моё»: не попадает в подборку дня
+      seen: num(raw.seen),
+      seenAt: num(raw.seenAt),
+      createdAt: num(raw.createdAt),
+      updatedAt: num(raw.updatedAt),
+      demo: !!raw.demo,
+    };
+  }
+  function normStash(raw, id) {
+    raw = raw || {};
+    return {
+      id: id,
+      title: str(raw.title, 120).trim() || 'Без названия',
+      note: str(raw.note, 600).trim(),
+      color: clampInt(raw.color, 0, 7),
+      createdAt: num(raw.createdAt),
+      updatedAt: num(raw.updatedAt),
+      demo: !!raw.demo,
+    };
+  }
+  function normDay(raw, id) {
+    raw = raw || {};
+    const ids = {};
+    if (isObj(raw.ids)) for (const k in raw.ids) if (raw.ids[k]) ids[k] = 1;
+    return { d: id, deck: Array.isArray(raw.deck) ? raw.deck.filter((x) => typeof x === 'string').slice(0, 100) : [], ids: ids };
+  }
+  function normState(raw) {
+    raw = raw || {};
+    return {
+      goal: clampInt(raw.goal == null ? 5 : raw.goal, 1, 30),
+      theme: raw.theme === 'light' || raw.theme === 'dark' ? raw.theme : 'system',
+      demoNote: !!raw.demoNote,
+      packsSeen: Array.isArray(raw.packsSeen) ? raw.packsSeen.filter((x) => typeof x === 'string' && ID_RE.test(x)).slice(0, 500) : [],
+    };
+  }
+
+  /* ───────── состояние ───────── */
+  const store = {
+    mode: 'boot',       // 'local' — данные в браузере, 'cloud' — в облачном хранилище страницы
+    ready: false,
+    syncing: false,
+    note: '',
+    retry: null,
+    ideas: new Map(),
+    stashes: new Map(),
+    days: new Map(),
+    state: normState(null),
+  };
+  let adapter = null;
+  const subs = new Set();
+  let rev = 0, emitQueued = false;
+  function emit() {
+    rev++;
+    if (emitQueued) return;
+    emitQueued = true;
+    Promise.resolve().then(() => {
+      emitQueued = false;
+      subs.forEach((fn) => { try { fn(); } catch (e) { console.error(e); } });
+    });
+  }
+
+  let memo = null, memoRev = -1;
+  function derived() {
+    if (memo && memoRev === rev) return memo;
+    const all = Array.from(store.ideas.values()).sort((a, b) => b.createdAt - a.createdAt || (a.id < b.id ? 1 : a.id > b.id ? -1 : 0));
+    const byStash = new Map(); const tagCount = new Map(); let demo = 0;
+    for (let k = all.length - 1; k >= 0; k--) {   // от старых к новым: внутри коллекции сохраняется порядок добавления
+      const i = all[k];
+      const key = i.stash && store.stashes.has(i.stash) ? i.stash : '';
+      let list = byStash.get(key);
+      if (!list) { list = []; byStash.set(key, list); }
+      list.push(i);
+      for (const t of i.tags) tagCount.set(t, (tagCount.get(t) || 0) + 1);
+      if (i.demo) demo++;
+    }
+    const tags = Array.from(tagCount.entries()).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'ru'));
+    memo = { all: all, byStash: byStash, tags: tags, demo: demo };
+    memoRev = rev;
+    return memo;
+  }
+  const stashOf = (idea) => (idea && idea.stash && store.stashes.get(idea.stash)) || null;
+  const markerOf = (idea) => { const s = stashOf(idea); return s ? s.color : 0; };
+  const ideasOf = (stashId) => derived().byStash.get(stashId) || [];
+  const sortedStashes = () => Array.from(store.stashes.values()).sort((a, b) => a.createdAt - b.createdAt || (a.id < b.id ? -1 : 1));
+  const wordsOf = (idea) => (idea.title + ' ' + idea.text).trim().split(/\s+/).length;
+  function countDay(k) { const d = store.days.get(k); return d ? Object.keys(d.ids).length : 0; }
+  function streakInfo() {
+    let k = todayKey(), current = 0;
+    if (!countDay(k)) k = addDays(k, -1);
+    while (countDay(k)) { current++; k = addDays(k, -1); }
+    let best = 0, run = 0, prev = '';
+    Array.from(store.days.keys()).sort().forEach((key) => {
+      if (!countDay(key)) return;
+      run = prev && addDays(prev, 1) === key ? run + 1 : 1;
+      prev = key;
+      if (run > best) best = run;
+    });
+    return { current: current, best: Math.max(best, current) };
+  }
+  function nextColor() {
+    const used = new Array(8).fill(0);
+    store.stashes.forEach((s) => { used[s.color]++; });
+    return used.indexOf(Math.min.apply(null, used));
+  }
+  function lastSource(stashId) {
+    const list = ideasOf(stashId);
+    for (let k = list.length - 1; k >= 0; k--) if (list[k].source) return list[k].source;
+    return '';
+  }
+  function snapshotAll() {
+    return { v: 1, ideas: Object.fromEntries(store.ideas), stashes: Object.fromEntries(store.stashes), days: Object.fromEntries(store.days), state: store.state };
+  }
+
+  /* ───────── хранение: браузер ───────── */
+  function LocalAdapter() {
+    let timer = 0;
+    function read() {
+      try { const raw = localStorage.getItem(LS_KEY); return raw ? JSON.parse(raw) : null; } catch (e) { return null; }
+    }
+    function load(data) {
+      store.ideas = new Map(); store.stashes = new Map(); store.days = new Map(); store.state = normState(null);
+      if (!isObj(data)) return;
+      for (const id in (data.ideas || {})) store.ideas.set(id, normIdea(data.ideas[id], id));
+      for (const id in (data.stashes || {})) store.stashes.set(id, normStash(data.stashes[id], id));
+      for (const id in (data.days || {})) if (DAY_RE.test(id)) store.days.set(id, normDay(data.days[id], id));
+      store.state = normState(data.state);
+    }
+    const NOTE_BLOCKED = 'Этот браузер не даёт странице сохранять данные. Изменения пропадут, когда вы закроете вкладку.';
+    const NOTE_FULL = 'Хранилище браузера переполнено, новые изменения не сохраняются. Сохраните копию в файл и удалите лишнее.';
+    function persistNow() {
+      clearTimeout(timer); timer = 0;
+      let note = '';
+      try { localStorage.setItem(LS_KEY, JSON.stringify(snapshotAll())); }
+      catch (e) { note = e && e.name === 'QuotaExceededError' ? NOTE_FULL : NOTE_BLOCKED; }
+      // о невозможности сохранять говорим постоянной строкой вверху, а не всплывающим сообщением на каждое действие
+      if (note ? store.note !== note : (store.note === NOTE_BLOCKED || store.note === NOTE_FULL)) { store.note = note; emit(); }
+    }
+    function persist() { if (!timer) timer = setTimeout(persistNow, 150); }
+    return {
+      kind: 'local',
+      start: function () {
+        const data = read();
+        load(data);
+        if (!data && packs.length) { addPacks(packs, Date.now() - 60000); persistNow(); }   // первый запуск: кладём все готовые подборки на пробу
+        window.addEventListener('storage', (e) => { if (e.key === LS_KEY && !timer) { load(read()); emit(); } });
+        window.addEventListener('pagehide', () => { if (timer) persistNow(); });
+        doc.addEventListener('visibilitychange', () => { if (doc.hidden && timer) persistNow(); });
+        store.ready = true;
+        return Promise.resolve();
+      },
+      set: persist,
+      update: persist,
+      remove: persist,
+      pending: () => 0,
+    };
+  }
+
+  /* ───────── хранение: облако страницы ─────────
+     Документы: ideas/<id>, stashes/<id>, days/<ГГГГ-ММ-ДД>, app/state.
+     Память обновляется сразу, запись уходит в очередь: по одной операции на документ и не больше трёх одновременно. */
+  function CloudAdapter(db) {
+    const LIFECYCLE = ['revoked', 'not_granted', 'capability_disabled', 'capability_removed', 'not_declared'];
+    const NOTE_SLOW = 'Пока не получается связаться с хранилищем. Показано то, что удалось загрузить; остальное появится, когда вернётся связь.';
+    const NOTE_LOST = 'Связь с хранилищем прервалась: изменения с других устройств пока не видны.';
+    const NOTE_DEAD = 'Нет доступа к облачному хранилищу, изменения не сохраняются. Обновите страницу.';
+    const NAMES = ['ideas', 'stashes', 'days', 'state'];
+    const writers = new Map();   // путь документа → { busy, pending }
+    const exists = new Set();    // документы, которые точно есть в хранилище
+    const first = {}, cached = {}, fresh = {};
+    const waiters = [], retryList = [];
+    let active = 0, pendingOps = 0, dead = false, olderBusy = false, olderDone = false, slowTimer = 0, lastFailToast = 0;
+    let ready;
+    const started = new Promise((r) => { ready = r; });
+
+    function becomeReady() { if (!store.ready) { store.ready = true; ready(); } }
+    function settle(name, meta) {
+      first[name] = true;
+      cached[name] = !!(meta && meta.fromCache);
+      const all = NAMES.every((n) => first[n]);
+      const definitive = all && NAMES.every((n) => !cached[n]);
+      store.syncing = !definitive;
+      if (definitive) { clearTimeout(slowTimer); if (store.note === NOTE_SLOW) store.note = ''; }
+      if (definitive || (all && store.ideas.size > 0)) becomeReady();
+    }
+
+    function applyDoc(path, snap) {
+      const cut = path.indexOf('/');
+      const col = path.slice(0, cut), id = path.slice(cut + 1);
+      const data = snap.exists ? snap.data() : null;
+      if (data) exists.add(path); else exists.delete(path);
+      if (col === 'ideas') { if (data) store.ideas.set(id, normIdea(data, id)); else store.ideas.delete(id); }
+      else if (col === 'stashes') { if (data) store.stashes.set(id, normStash(data, id)); else store.stashes.delete(id); }
+      else if (col === 'days') { if (data && DAY_RE.test(id)) store.days.set(id, normDay(data, id)); else store.days.delete(id); }
+      else if (path === 'app/state') store.state = normState(data);
+    }
+
+    function onCol(name, snap) {
+      // Подписка на идеи — окно из PAGE самых новых; всё, что старше нижней границы окна, догружается отдельно.
+      const full = name === 'ideas' && snap.size >= PAGE;
+      const floor = full ? snap.docs[snap.docs.length - 1].id : '';
+      if (fresh[name]) {
+        fresh[name] = false;
+        const seen = new Set(snap.docs.map((d) => d.id));
+        const map = name === 'ideas' ? store.ideas : name === 'stashes' ? store.stashes : store.days;
+        Array.from(map.keys()).forEach((id) => {
+          if (seen.has(id) || writers.has(name + '/' + id) || (full && id < floor)) return;
+          map.delete(id); exists.delete(name + '/' + id);
+        });
+        snap.docs.forEach((d) => { if (!writers.has(name + '/' + d.id)) applyDoc(name + '/' + d.id, d); });
+      } else {
+        snap.docChanges().forEach((ch) => {
+          const path = name + '/' + ch.doc.id;
+          if (writers.has(path)) return;   // идёт собственная запись: локальная версия новее снимка
+          if (ch.type === 'removed') { if (!(full && ch.doc.id < floor)) applyDoc(path, { exists: false }); }
+          else applyDoc(path, ch.doc);
+        });
+      }
+      settle(name, snap.metadata);
+      if (full && !snap.metadata.fromCache) loadOlder(floor);
+      emit();
+    }
+    function onState(snap) {
+      if (!writers.has('app/state')) applyDoc('app/state', snap);
+      settle('state', snap.metadata);
+      emit();
+    }
+    async function loadOlder(before) {
+      if (olderBusy || olderDone) return;
+      olderBusy = true;
+      try {
+        let cursor = before;
+        for (let guard = 0; guard < 30; guard++) {
+          const snap = await db.collection('ideas').where('id', '<', cursor).orderBy('id', 'desc').limit(PAGE).get();
+          snap.docs.forEach((d) => { const path = 'ideas/' + d.id; if (!writers.has(path) && !store.ideas.has(d.id)) applyDoc(path, d); });
+          emit();
+          if (snap.size < PAGE) break;
+          cursor = snap.docs[snap.docs.length - 1].id;
+        }
+        olderDone = true;
+      } catch (e) {
+        console.warn('[Суть] не удалось догрузить старые идеи:', e && e.code);
+      }
+      olderBusy = false;
+    }
+
+    function listen(name, make, handler) {
+      const open = () => {
+        fresh[name] = true;
+        try { make().onSnapshot(handler, (err) => lost(name, err, open)); }
+        catch (e) { lost(name, { code: 'invalid_argument', message: String(e) }, open); }
+      };
+      open();
+    }
+    function lost(name, err, open) {
+      const code = (err && err.code) || 'unavailable';
+      console.warn('[Суть] подписка «' + name + '» остановилась:', code, err && err.message);
+      first[name] = true; cached[name] = false;
+      if (LIFECYCLE.includes(code)) { dead = true; store.note = NOTE_DEAD; store.retry = null; }
+      else {
+        retryList.push(open);
+        store.note = NOTE_LOST;
+        store.retry = () => { const list = retryList.splice(0); store.note = ''; store.retry = null; emit(); list.forEach((f) => f()); };
+      }
+      becomeReady();
+      emit();
+    }
+
+    function acquire() {
+      if (active < 3) { active++; return Promise.resolve(); }
+      return new Promise((r) => waiters.push(r));
+    }
+    function release() { const next = waiters.shift(); if (next) next(); else active--; }
+    function mergeOps(a, b) {
+      if (!a || b.t !== 'update') return b;
+      if (a.t === 'delete') return a;
+      return { t: a.t, data: deepMerge(a.data, b.data), full: b.full || a.full };
+    }
+    function push(path, op) {
+      if (dead) return;
+      let w = writers.get(path);
+      if (!w) { w = { busy: false, pending: null }; writers.set(path, w); }
+      if (!w.pending) pendingOps++;
+      w.pending = mergeOps(w.pending, op);
+      if (!w.busy) pump(path, w);
+    }
+    async function pump(path, w) {
+      w.busy = true;
+      while (w.pending) {
+        const op = w.pending;
+        w.pending = null;
+        await acquire();
+        try { await exec(path, op, 0); } catch (e) { failed(path, op, e); } finally { release(); }
+        pendingOps--;
+      }
+      writers.delete(path);
+    }
+    async function exec(path, op, attempt) {
+      const ref = db.doc(path);
+      try {
+        if (op.t === 'set') await ref.set(op.data);
+        else if (op.t === 'update') await ref.update(op.data);
+        else await ref.delete();
+      } catch (e) {
+        const code = e && e.code;
+        if (code === 'unavailable' && attempt < 2) { await sleep(500 + Math.random() * 900); return exec(path, op, attempt + 1); }
+        if (code === 'resource_exhausted' && attempt < 5) { await sleep(1000 * Math.pow(2, attempt) + Math.random() * 400); return exec(path, op, attempt + 1); }
+        // update отклоняется, если документа ещё нет: для дневника и настроек создаём его целиком
+        if (code === 'invalid_argument' && op.t === 'update' && op.full && attempt < 1) return exec(path, { t: 'set', data: plain(op.full()) }, 1);
+        throw e;
+      }
+    }
+    function failed(path, op, e) {
+      const code = (e && e.code) || 'unavailable';
+      console.warn('[Суть] запись не удалась:', path, op.t, code, e && e.message);
+      if (LIFECYCLE.includes(code)) { dead = true; store.note = NOTE_DEAD; emit(); return; }
+      const quiet = code === 'invalid_argument' && op.t === 'update';   // документ удалили на другом устройстве
+      if (!quiet && Date.now() - lastFailToast > 5000) {
+        lastFailToast = Date.now();
+        toast(code === 'quota_exceeded' ? 'Хранилище заполнено. Удалите часть идей, чтобы сохранять новые.' : 'Не удалось сохранить изменение. Проверьте соединение.');
+      }
+      resync(path);
+    }
+    async function resync(path) {   // после неудачной записи возвращаем в память то, что на самом деле лежит в хранилище
+      try {
+        const snap = await db.doc(path).get();
+        const w = writers.get(path);
+        if (!w || !w.pending) { applyDoc(path, snap); emit(); }
+      } catch (e) { /* останется как есть до следующего снимка */ }
+    }
+
+    return {
+      kind: 'cloud',
+      start: function () {
+        store.syncing = true;
+        listen('stashes', () => db.collection('stashes').limit(PAGE), (s) => onCol('stashes', s));
+        listen('ideas', () => db.collection('ideas').orderBy('id', 'desc').limit(PAGE), (s) => onCol('ideas', s));
+        listen('days', () => db.collection('days').orderBy('d', 'desc').limit(400), (s) => onCol('days', s));
+        listen('state', () => db.doc('app/state'), onState);
+        slowTimer = setTimeout(() => {
+          if (!store.ready || store.syncing) { if (!store.note) store.note = NOTE_SLOW; becomeReady(); emit(); }
+        }, 10000);
+        return started;
+      },
+      set: function (col, id, data) { const path = col + '/' + id; exists.add(path); push(path, { t: 'set', data: plain(data) }); },
+      update: function (col, id, patch, full) {
+        const path = col + '/' + id;
+        if (exists.has(path)) push(path, { t: 'update', data: plain(patch), full: full });
+        else if (full) { exists.add(path); push(path, { t: 'set', data: plain(full()) }); }
+      },
+      remove: function (col, id) { const path = col + '/' + id; exists.delete(path); push(path, { t: 'delete' }); },
+      pending: () => pendingOps,
+    };
+  }
+
+  /* ───────── изменения ───────── */
+  function createIdea(fields) {
+    const t = Date.now();
+    const idea = normIdea(Object.assign({ seen: 0, seenAt: 0, createdAt: t, updatedAt: t }, fields), newId());
+    store.ideas.set(idea.id, idea);
+    adapter.set('ideas', idea.id, idea);
+    emit();
+    return idea;
+  }
+  function updateIdea(id, fields) {
+    const old = store.ideas.get(id);
+    if (!old) return null;
+    const idea = normIdea(Object.assign({}, old, fields, { updatedAt: Date.now() }), id);
+    store.ideas.set(id, idea);
+    adapter.set('ideas', id, idea);
+    emit();
+    return idea;
+  }
+  function patchIdea(id, patch) {   // точечная правка (избранное, отметка о прочтении): в облако уходят только эти поля
+    const old = store.ideas.get(id);
+    if (!old) return;
+    store.ideas.set(id, normIdea(Object.assign({}, old, patch), id));
+    adapter.update('ideas', id, patch);
+    emit();
+  }
+  function removeIdea(id) {
+    const old = store.ideas.get(id);
+    if (!old) return null;
+    store.ideas.delete(id);
+    adapter.remove('ideas', id);
+    emit();
+    return old;
+  }
+  function restoreIdea(idea) {
+    store.ideas.set(idea.id, idea);
+    adapter.set('ideas', idea.id, idea);
+    emit();
+  }
+  function createStash(fields) {
+    const t = Date.now();
+    const st = normStash(Object.assign({ createdAt: t, updatedAt: t }, fields), newId());
+    store.stashes.set(st.id, st);
+    adapter.set('stashes', st.id, st);
+    emit();
+    return st;
+  }
+  function updateStash(id, fields) {
+    const old = store.stashes.get(id);
+    if (!old) return;
+    const st = normStash(Object.assign({}, old, fields, { updatedAt: Date.now() }), id);
+    store.stashes.set(id, st);
+    adapter.set('stashes', id, st);
+    emit();
+  }
+  function removeStash(id, withIdeas) {
+    if (!store.stashes.has(id)) return;
+    ideasOf(id).forEach((i) => {
+      if (withIdeas) { store.ideas.delete(i.id); adapter.remove('ideas', i.id); }
+      else { store.ideas.set(i.id, normIdea(Object.assign({}, i, { stash: '' }), i.id)); adapter.update('ideas', i.id, { stash: '' }); }
+    });
+    store.stashes.delete(id);
+    adapter.remove('stashes', id);
+    emit();
+  }
+  function patchDay(key, patch) {
+    const old = store.days.get(key) || { d: key, deck: [], ids: {} };
+    store.days.set(key, { d: key, deck: patch.deck || old.deck, ids: patch.ids ? Object.assign({}, old.ids, patch.ids) : old.ids });
+    adapter.update('days', key, patch, () => store.days.get(key));
+    emit();
+  }
+  function patchState(patch) {
+    store.state = normState(Object.assign({}, store.state, patch));
+    adapter.update('app', 'state', patch, () => store.state);
+    emit();
+  }
+  function markRead(id) {
+    const idea = store.ideas.get(id);
+    if (!idea) return;
+    const key = todayKey();
+    const day = store.days.get(key);
+    if (day && day.ids[id]) return;   // сегодня уже отмечена: лишних записей не делаем
+    const mark = {};
+    mark[id] = 1;
+    patchDay(key, { ids: mark });
+    patchIdea(id, { seen: idea.seen + 1, seenAt: Date.now() });
+  }
+  /* ───────── каталог готовых подборок ─────────
+     Подборка каталога становится коллекцией с тем же id; «добавлена» значит, что такая коллекция есть в картотеке. */
+  let packs = [];
+  function cleanPacks(list) {
+    return (Array.isArray(list) ? list : []).filter((p) => isObj(p) && ID_RE.test(String(p.id)) && Array.isArray(p.ideas)).map((p) => ({
+      id: p.id,
+      title: str(p.title, 120).trim() || 'Подборка',
+      note: str(p.note, 600).trim(),
+      color: clampInt(p.color, 0, 7),
+      ideas: p.ideas.filter((it) => isObj(it) && ID_RE.test(String(it.id))),
+    }));
+  }
+  const availablePacks = () => packs.filter((p) => !store.stashes.has(p.id));
+  const newPacks = () => availablePacks().filter((p) => !store.state.packsSeen.includes(p.id));
+  const countIdeas = (list) => list.reduce((sum, p) => sum + p.ideas.length, 0);
+  function addPack(p, t) {
+    const st = normStash({ title: p.title, note: p.note, color: p.color, createdAt: t, updatedAt: t, demo: true }, p.id);
+    store.stashes.set(st.id, st);
+    adapter.set('stashes', st.id, st);
+    p.ideas.forEach((it, k) => {
+      const old = store.ideas.get(it.id);   // идея могла остаться от удалённой коллекции: её отметки сохраняем
+      const keep = old ? { fav: old.fav, skip: old.skip, seen: old.seen, seenAt: old.seenAt } : null;
+      const idea = normIdea(Object.assign({}, it, keep, { stash: p.id, createdAt: t + 1 + k, updatedAt: t + 1 + k, demo: true }), it.id);
+      store.ideas.set(idea.id, idea);
+      adapter.set('ideas', idea.id, idea);
+    });
+  }
+  function addPacks(list, base) {
+    const t = base || Date.now();
+    list.forEach((p, k) => addPack(p, t + k * 200));
+    seePacks();
+    emit();
+  }
+  function seePacks() {   // запоминаем, какие подборки каталога человек уже видел, чтобы не предлагать их как новые
+    const seen = store.state.packsSeen;
+    const more = packs.map((p) => p.id).filter((id) => !seen.includes(id));
+    if (more.length) patchState({ packsSeen: seen.concat(more) });
+  }
+  function interestRows() {   // по коллекциям: сколько прочитано, что зацепило, что мимо; сверху то, что цепляет чаще
+    const rows = [];
+    derived().byStash.forEach((list, key) => {
+      const st = store.stashes.get(key);
+      let read = 0, fav = 0, skip = 0;
+      list.forEach((i) => { if (i.seen) read++; if (i.fav) fav++; if (i.skip) skip++; });
+      if (read || fav || skip) rows.push({ title: st ? st.title : 'Без коллекции', color: st ? st.color : 0, total: list.length, read: read, fav: fav, skip: skip, score: (fav - skip) / Math.max(1, read) });
+    });
+    return rows.sort((a, b) => b.score - a.score || b.fav - a.fav || b.read - a.read);
+  }
+  function interestsText(rows) {
+    const liked = derived().all.filter((i) => i.fav).slice(0, 15).map((i) => '«' + (i.title || snippet(i.text, 60)) + '»');
+    return ['Мои отметки в «Сути» на ' + new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }) + ':']
+      .concat(rows.map((r) => '— ' + r.title + ': зацепило ' + r.fav + ', не моё ' + r.skip + ', прочитано ' + r.read + ' из ' + r.total))
+      .concat(liked.length ? ['', 'Что зацепило: ' + liked.join('; ')] : [])
+      .join('\n');
+  }
+  function removeDemo() {
+    Array.from(store.ideas.values()).forEach((i) => { if (i.demo) { store.ideas.delete(i.id); adapter.remove('ideas', i.id); } });
+    Array.from(store.stashes.values()).forEach((s) => {
+      if (!s.demo) return;
+      let used = false;
+      store.ideas.forEach((i) => { if (i.stash === s.id) used = true; });
+      if (used) { store.stashes.set(s.id, Object.assign({}, s, { demo: false })); adapter.update('stashes', s.id, { demo: false }); }
+      else { store.stashes.delete(s.id); adapter.remove('stashes', s.id); }
+    });
+    emit();
+  }
+  function wipeAll() {
+    Array.from(store.ideas.keys()).forEach((id) => { store.ideas.delete(id); adapter.remove('ideas', id); });
+    Array.from(store.stashes.keys()).forEach((id) => { store.stashes.delete(id); adapter.remove('stashes', id); });
+    Array.from(store.days.keys()).forEach((id) => { store.days.delete(id); adapter.remove('days', id); });
+    emit();
+  }
+  function exportPayload() {
+    return JSON.stringify({
+      app: 'sut', version: 1, exportedAt: new Date().toISOString(),
+      ideas: Array.from(store.ideas.values()), stashes: Array.from(store.stashes.values()),
+      days: Object.fromEntries(store.days), state: store.state,
+    }, null, 1);
+  }
+  function importData(text) {
+    let data;
+    try { data = JSON.parse(text); } catch (e) { return { error: 'Не получилось прочитать файл: это не копия данных «Сути».' }; }
+    if (!isObj(data) || !Array.isArray(data.ideas)) return { error: 'В этом файле нет списка идей.' };
+    let added = 0, updated = 0;
+    (Array.isArray(data.stashes) ? data.stashes : []).forEach((s) => {
+      if (!isObj(s) || !ID_RE.test(String(s.id))) return;
+      const st = normStash(s, s.id);
+      store.stashes.set(st.id, st);
+      adapter.set('stashes', st.id, st);
+    });
+    data.ideas.slice(0, 5000).forEach((it) => {
+      if (!isObj(it)) return;
+      const id = ID_RE.test(String(it.id)) ? it.id : newId();
+      const idea = normIdea(it, id);
+      if (!idea.title && !idea.text) return;
+      if (!idea.createdAt) { idea.createdAt = Date.now(); idea.updatedAt = idea.createdAt; }
+      if (store.ideas.has(id)) updated++; else added++;
+      store.ideas.set(id, idea);
+      adapter.set('ideas', id, idea);
+    });
+    if (isObj(data.days)) {
+      for (const k in data.days) {
+        if (!DAY_RE.test(k)) continue;
+        const d = normDay(data.days[k], k);
+        if (!Object.keys(d.ids).length) continue;
+        const have = store.days.get(k);
+        patchDay(k, d.deck.length && !(have && have.deck.length) ? { ids: d.ids, deck: d.deck } : { ids: d.ids });
+      }
+    }
+    emit();
+    return { added: added, updated: updated };
+  }
+
+  /* ───────── подборка дня ───────── */
+  function buildDeck(n, exclude) {
+    // сначала непрочитанные (в случайном, но постоянном на день порядке), потом те, что читали давнее всего
+    const salt = todayKey();
+    return Array.from(store.ideas.values()).filter((i) => !i.skip && !exclude.has(i.id))
+      .map((i) => ({ id: i.id, seen: i.seen ? 1 : 0, at: i.seenAt, r: hash32(i.id + salt) }))
+      .sort((a, b) => a.seen - b.seen || (a.seen ? a.at - b.at : 0) || a.r - b.r)
+      .slice(0, n).map((x) => x.id);
+  }
+  function deckState() {
+    const key = todayKey();
+    const day = store.days.get(key) || { d: key, deck: [], ids: {} };
+    let deck = day.deck.filter((id) => store.ideas.has(id));
+    const saved = deck.length > 0;
+    if (!saved) deck = buildDeck(store.state.goal, new Set());
+    return { key: key, day: day, deck: deck, saved: saved, left: deck.filter((id) => !day.ids[id]), readToday: Object.keys(day.ids).length };
+  }
+  function startDaily() {
+    const s = deckState();
+    if (!s.deck.length) return;
+    if (!s.saved) patchDay(s.key, { deck: s.deck });   // подборка закрепляется за днём в момент, когда её начали читать
+    openReader({ ids: s.deck, index: s.left.length ? s.deck.indexOf(s.left[0]) : 0, mode: 'daily', title: 'Подборка дня' });
+  }
+  function moreDaily() {
+    const s = deckState();
+    const deck = buildDeck(store.state.goal, new Set(Object.keys(s.day.ids)));
+    if (!deck.length) { toast('Сегодня вы уже прочитали всю картотеку.'); return; }
+    patchDay(s.key, { deck: deck });
+    openReader({ ids: deck, index: 0, mode: 'daily', title: 'Подборка дня' });
+  }
+
+  /* ───────── разбор текста ───────── */
+  function parseBulk(text) {
+    const out = [];
+    const clean = (l) => l.replace(/^(?:\d{1,3}[.)]\s+|[-*•—–]\s+|#{1,6}\s+)/, '').replace(/^\*\*(.+?)\*\*:?$/, '$1').trim();
+    String(text || '').replace(/\r\n?/g, '\n').split(/\n[ \t]*\n+/).forEach((block) => {
+      const lines = block.split('\n').map((l) => l.trim()).filter(Boolean);
+      if (!lines.length || out.length >= 100) return;
+      if (lines.length === 1) { const one = clean(lines[0]); if (one) out.push({ title: '', text: one }); return; }
+      out.push({ title: str(clean(lines[0]).replace(/[:.]$/, ''), 160), text: lines.slice(1).join('\n') });
+    });
+    return out;
+  }
+  const CHAT_PROMPT = 'Выдели 7 ключевых идей из материала, который я пришлю следующим сообщением (книга, статья или конспект). ' +
+    'Формат ответа строго такой: первая строка — заголовок идеи до 60 знаков, без нумерации и кавычек; со следующей строки — текст идеи, 2–4 предложения простым языком; ' +
+    'между идеями одна пустая строка. Без вступлений, списков, звёздочек и пояснений.';
+  function aiPrompt(material, n) {
+    return [
+      'Ты помогаешь вести личную картотеку коротких идей: каждая карточка — одна самостоятельная мысль.',
+      'Выдели из материала ниже ровно ' + n + ' самых ценных идей. Если материал — только название книги, статьи или тема, опирайся на общеизвестное содержание и не приписывай автору того, в чём не уверен.',
+      'Требования к каждой идее:',
+      '— "title": заголовок до 60 знаков, конкретный, без кавычек и точки в конце;',
+      '— "text": 2–4 предложения, до 450 знаков, понятные без контекста, своими словами и без воды;',
+      '— "tags": 1–3 коротких тега строчными буквами.',
+      'Пиши по-русски. Не выдумывай цифр, фактов и цитат, которых нет в материале.',
+      'Ответь только JSON-объектом такого вида, без пояснений:',
+      '{"collection": "короткое название подборки", "source": "автор и название источника или пустая строка", "ideas": [{"title": "…", "text": "…", "tags": ["…"]}]}',
+      '',
+      'Материал:',
+      '<<<',
+      material,
+      '>>>',
+    ].join('\n');
+  }
+  function parseAI(data) {
+    const arr = Array.isArray(data) ? data : isObj(data) && Array.isArray(data.ideas) ? data.ideas : [];
+    const items = arr.filter(isObj).map((x) => ({ title: str(x.title, 160).trim(), text: str(x.text, 2000).trim(), tags: parseTags(x.tags) }))
+      .filter((x) => x.title || x.text).slice(0, 20);
+    return { items: items, collection: isObj(data) ? str(data.collection, 120).trim() : '', source: isObj(data) ? str(data.source, 200).trim() : '' };
+  }
+  const AI_ERRORS = {
+    not_granted: 'Claude не разрешён для этой страницы. Идеи можно добавить вручную или списком.',
+    sampling_disabled: 'Claude недоступен для этого аккаунта. Идеи можно добавить вручную или списком.',
+    not_declared: 'Claude недоступен на этой странице. Идеи можно добавить вручную или списком.',
+    capability_disabled: 'Claude недоступен в этом окне. Идеи можно добавить вручную или списком.',
+    capability_removed: 'Это окно Claude устарело и не умеет отвечать страницам. Обновите приложение.',
+    rate_limited: 'Слишком много запросов подряд. Подождите минуту и попробуйте снова.',
+    session_expired: 'Сессия истекла. Войдите в Claude заново и повторите.',
+    refused: 'Claude отказался работать с этим материалом. Попробуйте другой текст.',
+    prompt_too_large: 'Текст слишком длинный. Вставьте фрагмент покороче.',
+    invalid_json: 'Не получилось разобрать ответ. Попробуйте ещё раз.',
+    empty_completion: 'Claude ничего не ответил. Попробуйте ещё раз или сократите текст.',
+  };
+
+  /* ───────── слои: читалка, шторки, диалоги, меню ───────── */
+  const layers = [];
+  function pushLayer(layer) {
+    if (layers.length) layers[layers.length - 1].el.inert = true;
+    layers.push(layer);
+    layersEl.appendChild(layer.el);
+    appEl.inert = true;
+  }
+  function popLayer(layer) {
+    const k = layers.indexOf(layer);
+    if (k < 0) return;
+    layers.splice(k, 1);
+    layer.el.remove();
+    if (layers.length) layers[layers.length - 1].el.inert = false;
+    appEl.inert = layers.length > 0;
+  }
+  doc.addEventListener('keydown', (e) => {
+    const top = layers[layers.length - 1];
+    if (top && top.onKey) top.onKey(e);
+  });
+  const refocus = (el) => { if (el && el.focus && doc.contains(el)) el.focus(); };
+
+  function toast(text, action) {
+    const t = h('div', { class: 'toast' }, h('span', { text: text }),
+      action ? h('button', { type: 'button', onclick: () => { t.remove(); action.fn(); } }, action.label) : null);
+    toastsEl.appendChild(t);
+    setTimeout(() => t.remove(), action ? 6500 : 3800);
+  }
+
+  function dialog(opts) {   // вместо confirm(): он на опубликованной странице не работает
+    return new Promise((resolve) => {
+      const opener = doc.activeElement;
+      const box = h('div', { class: 'dialog', role: 'alertdialog', 'aria-modal': 'true', 'aria-label': opts.title },
+        h('h2', { text: opts.title }), opts.text ? h('p', { text: opts.text }) : null,
+        h('div', { class: 'dialog-actions' }, opts.actions.map((a) => h('button', { class: 'btn ' + (a.kind || 'btn-line'), type: 'button', onclick: () => done(a.value) }, a.label))));
+      const layer = { el: h('div', { class: 'scrim center' }, box), onKey: (e) => { if (e.key === 'Escape') done(null); } };
+      function done(v) { popLayer(layer); refocus(opener); resolve(v); }
+      pushLayer(layer);
+      box.querySelector('button').focus();
+    });
+  }
+
+  function openMenu(anchor, items) {
+    const menu = h('div', { class: 'menu', role: 'menu' }, items.map((it) =>
+      h('button', { class: 'menu-item' + (it.danger ? ' danger' : ''), type: 'button', role: 'menuitem', onclick: () => { close(); it.fn(); } }, icon(it.icon, 18), it.label)));
+    const scrim = h('div', { class: 'menu-scrim', onclick: (e) => { if (e.target === scrim) close(); } }, menu);
+    const layer = { el: scrim, onKey: (e) => { if (e.key === 'Escape') close(); } };
+    function close() { popLayer(layer); refocus(anchor); }
+    const r = anchor.getBoundingClientRect();
+    pushLayer(layer);
+    const mw = menu.offsetWidth, mh = menu.offsetHeight;
+    let top = r.bottom + 6;
+    if (top + mh > window.innerHeight - 8) top = Math.max(8, r.top - mh - 6);
+    menu.style.left = Math.max(8, Math.min(r.right - mw, window.innerWidth - mw - 8)) + 'px';
+    menu.style.top = top + 'px';
+    menu.querySelector('button').focus();
+  }
+
+  function openSheet(opts) {
+    const opener = doc.activeElement;
+    const body = h('div', { class: 'sheet-body' });
+    const foot = h('div', { class: 'sheet-foot', hidden: true });
+    const sheet = h('div', { class: 'sheet', role: 'dialog', 'aria-modal': 'true', 'aria-label': opts.title },
+      h('div', { class: 'sheet-head' }, h('h2', { text: opts.title }), iconBtn('close', 'Закрыть', () => close(false))),
+      opts.tabs ? h('div', { class: 'sheet-tabs' }, opts.tabs) : null, body, foot);
+    const scrim = h('div', { class: 'scrim' }, sheet);
+    let pressed = false, asking = false;
+    scrim.addEventListener('pointerdown', (e) => { pressed = e.target === scrim; });
+    scrim.addEventListener('click', (e) => { if (e.target === scrim && pressed) close(false); });
+    const layer = { el: scrim, onKey: (e) => { if (e.key === 'Escape') close(false); } };
+    async function close(force) {
+      if (asking) return;
+      if (!force && opts.dirty && opts.dirty()) {
+        asking = true;
+        const leave = await dialog({ title: 'Закрыть без сохранения?', text: 'Введённый текст пропадёт.', actions: [{ label: 'Вернуться к тексту', value: false, kind: 'btn-primary' }, { label: 'Закрыть', value: true, kind: 'btn-line btn-danger' }] });
+        asking = false;
+        if (!leave) return;
+      }
+      popLayer(layer);
+      if (opts.onClose) opts.onClose();
+      refocus(opener);
+    }
+    pushLayer(layer);
+    return {
+      body: body,
+      close: close,
+      setFoot: function (nodes) { fill(foot, nodes); foot.hidden = !foot.childNodes.length; },
+    };
+  }
+
+  function showTextSheet(title, text, hint) {
+    const ta = h('textarea', { class: 'textarea', id: 'copy-text', rows: '8', readonly: true, value: text });
+    const sheet = openSheet({ title: title });
+    fill(sheet.body, hint ? h('p', { class: 'hint', text: hint }) : null, ta);
+    sheet.setFoot([btn('Выделить всё', () => { ta.focus(); ta.select(); }, 'btn-primary')]);
+    ta.focus(); ta.select();
+  }
+  function copyText(text, okMessage) {
+    const fallback = () => showTextSheet('Скопируйте текст', text, 'Не получилось скопировать автоматически. Выделите текст и скопируйте его сами.');
+    try { navigator.clipboard.writeText(text).then(() => toast(okMessage || 'Скопировано.'), fallback); } catch (e) { fallback(); }
+  }
+
+  /* ───────── чтение ───────── */
+  function openReader(opts) {
+    const ids = opts.ids.filter((id) => store.ideas.has(id));
+    if (!ids.length) return;
+    const st = { ids: ids, i: Math.min(Math.max(0, opts.index || 0), ids.length - 1), done: false, sig: '', timer: 0 };
+    const opener = doc.activeElement;
+    const daily = opts.mode === 'daily';
+    let card = null, drag = null;
+
+    const prog = h('div', { class: 'rprog' });
+    const count = h('span', { class: 'rcount' });
+    const stage = h('div', { class: 'reader-stage' });
+    const ctl = (button, label) => h('div', { class: 'rctl' }, button, h('span', { 'aria-hidden': 'true', text: label }));
+    const prevBtn = h('button', { class: 'rbtn', type: 'button', 'aria-label': 'Предыдущая идея', title: 'Предыдущая идея', onclick: () => step(-1) }, icon('left', 24));
+    const skipBtn = h('button', { class: 'rbtn skip', type: 'button', 'aria-label': 'Не моё', title: 'Не моё: больше не показывать в подборке дня', onclick: toggleSkip }, icon('ban', 24));
+    const favBtn = h('button', { class: 'rbtn fav', type: 'button', 'aria-label': 'Зацепило: в избранное', title: 'Зацепило: в избранное', onclick: toggleFav }, icon('heart', 24));
+    const nextBtn = h('button', { class: 'rnext', type: 'button', onclick: () => step(1) });
+    const moreBtn = iconBtn('more', 'Действия с идеей', () => ideaMenu(moreBtn, cur()));
+    const skipCtl = ctl(skipBtn, 'Не моё'), favCtl = ctl(favBtn, 'Зацепило');
+    const el = h('div', { class: 'reader', role: 'dialog', 'aria-modal': 'true', 'aria-label': opts.title || 'Чтение идей' },
+      h('div', { class: 'reader-top' }, iconBtn('close', 'Закрыть', close), prog, count, moreBtn),
+      stage,
+      h('div', { class: 'reader-bottom' }, ctl(prevBtn, 'Назад'), skipCtl, favCtl, nextBtn));
+    const layer = { el: el, update: update, onKey: onKey };
+
+    function cur() { return store.ideas.get(st.ids[st.i]); }
+    function sigOf(idea) { const s = stashOf(idea); return idea.id + '|' + idea.updatedAt + '|' + (s ? s.title + s.color : ''); }
+    function setMarks(idea) {
+      favBtn.classList.toggle('on', idea.fav);
+      favBtn.setAttribute('aria-pressed', String(idea.fav));
+      skipBtn.classList.toggle('on', idea.skip);
+      skipBtn.setAttribute('aria-pressed', String(idea.skip));
+    }
+
+    function face(idea) {
+      const s = stashOf(idea);
+      const foot = [];
+      if (idea.source) foot.push(h('span', { text: idea.source }));
+      if (/^https:\/\//i.test(idea.url)) foot.push(h('a', { href: idea.url, target: '_blank', rel: 'noopener noreferrer', text: hostOf(idea.url) }));
+      else if (idea.url) foot.push(h('span', { text: idea.url }));
+      if (idea.tags.length) foot.push(h('span', { class: 'rtags' }, idea.tags.map((t) => h('span', { text: '#' + t }))));
+      return h('article', { class: 'rcard' },
+        h('div', { class: 'rcard-kicker' }, h('i'), h('span', { class: 'ellip', text: s ? s.title : 'Без коллекции' })),
+        idea.title ? h('h2', { class: 'rcard-title' }, h('span', { class: 'hl', text: idea.title })) : null,
+        idea.text ? h('p', { class: 'rcard-text' + (idea.title ? '' : ' solo'), text: idea.text }) : null,
+        foot.length ? h('div', { class: 'rcard-foot' }, foot) : null);
+    }
+    function endFace() {
+      const s = streakInfo();
+      const n = countDay(todayKey());
+      return h('article', { class: 'rcard rend' },
+        h('span', { class: 'label', text: daily ? 'Подборка дня' : (opts.title || 'Чтение') }),
+        h('h2', null, h('span', { class: 'hl', text: daily ? 'Подборка прочитана' : 'Это была последняя идея' })),
+        h('p', { class: 'rcard-text', text: 'Сегодня прочитано: ' + nIdeas(n) + '.' + (s.current > 1 ? ' Серия: ' + nDays(s.current) + ' подряд.' : '') }),
+        h('div', { class: 'row' },
+          daily ? btn('Ещё подборка', () => { close(); moreDaily(); }, 'btn-primary', 'right')
+            : btn('С начала', () => { st.done = false; st.i = 0; paint(-1); }, 'btn-line'),
+          btn('Закрыть', close, daily ? 'btn-line' : 'btn-primary')));
+    }
+
+    function paint(dir) {
+      clearTimeout(st.timer);
+      const n = st.ids.length;
+      if (n <= 14) {
+        prog.className = 'rprog';
+        fill(prog, st.ids.map((_, k) => h('i', { class: st.done || k <= st.i ? 'on' : '' })));
+      } else {
+        prog.className = 'rprog bar';
+        fill(prog, h('i', { style: { width: ((st.done ? n : st.i + 1) / n * 100) + '%' } }));
+      }
+      count.textContent = (st.done ? n : st.i + 1) + ' / ' + n;
+      prevBtn.disabled = !st.done && st.i === 0;
+      skipCtl.hidden = favCtl.hidden = nextBtn.hidden = moreBtn.hidden = st.done;
+      if (st.done) {
+        el.className = 'reader mk-0';
+        card = endFace();
+        st.sig = '';
+      } else {
+        const idea = cur();
+        el.className = 'reader mk-' + markerOf(idea);
+        card = face(idea);
+        st.sig = sigOf(idea);
+        setMarks(idea);
+        const last = st.i === n - 1;
+        fill(nextBtn, last ? 'Готово' : 'Дальше', icon(last ? 'check' : 'right', 20));
+        st.timer = setTimeout(() => markRead(idea.id), 1200);   // задержались на карточке — считаем прочитанной
+      }
+      if (dir) card.classList.add(dir > 0 ? 'in-next' : 'in-prev');
+      fill(stage, card);
+    }
+    function step(d) {
+      if (st.done) { if (d < 0) { st.done = false; paint(-1); } return; }
+      if (d > 0) {
+        const idea = cur();
+        if (idea) markRead(idea.id);
+        if (st.i === st.ids.length - 1) st.done = true; else st.i++;
+        paint(1);
+      } else if (st.i > 0) { st.i--; paint(-1); }
+    }
+    // две отметки исключают друг друга: по ним потом видно, какие темы человеку интересны
+    function toggleFav() {
+      const idea = cur();
+      if (!idea) return;
+      if (idea.fav) { patchIdea(idea.id, { fav: false }); return; }
+      patchIdea(idea.id, { fav: true, skip: false });
+      markRead(idea.id);   // раз зацепило, значит прочитано
+    }
+    function toggleSkip() {
+      const idea = cur();
+      if (!idea) return;
+      if (idea.skip) { patchIdea(idea.id, { skip: false }); return; }
+      patchIdea(idea.id, { skip: true, fav: false });
+      step(1);   // «не моё» — и сразу к следующей
+    }
+    function update() {   // пока читалка открыта, идеи могли изменить или удалить
+      const alive = st.ids.filter((id) => store.ideas.has(id));
+      if (alive.length !== st.ids.length) {
+        if (!alive.length) { close(); return; }
+        const at = alive.indexOf(st.ids[st.i]);
+        st.i = at >= 0 ? at : Math.min(st.i, alive.length - 1);
+        st.ids = alive;
+        paint(0);
+        return;
+      }
+      if (st.done) return;
+      const idea = cur();
+      if (sigOf(idea) !== st.sig) paint(0); else setMarks(idea);
+    }
+    function onKey(e) {
+      if (e.key === 'Escape') { close(); return; }
+      if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); step(1); }
+      else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); step(-1); }
+    }
+    function close() {
+      clearTimeout(st.timer);
+      popLayer(layer);
+      refocus(opener);
+    }
+
+    // смахивание пальцем: влево — дальше, вправо — назад
+    const settleCard = () => { if (card) { card.style.transition = ''; card.style.transform = ''; } };
+    stage.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'mouse' || st.done) return;
+      drag = { id: e.pointerId, x: e.clientX, y: e.clientY, dx: 0, on: false };
+    });
+    stage.addEventListener('pointermove', (e) => {
+      if (!drag || e.pointerId !== drag.id) return;
+      const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+      if (!drag.on) {
+        if (Math.abs(dx) < 12 || Math.abs(dx) < Math.abs(dy) * 1.3) return;
+        drag.on = true;
+      }
+      drag.dx = dx;
+      card.style.transition = 'none';
+      card.style.transform = 'translateX(' + (dx * 0.9) + 'px) rotate(' + (dx * 0.012) + 'deg)';
+    });
+    stage.addEventListener('pointerup', (e) => {
+      if (!drag || e.pointerId !== drag.id) return;
+      const dx = drag.on ? drag.dx : 0;
+      drag = null;
+      settleCard();
+      if (dx < -70) step(1); else if (dx > 70) step(-1);
+    });
+    stage.addEventListener('pointercancel', () => { drag = null; settleCard(); });
+
+    pushLayer(layer);
+    paint(0);
+    nextBtn.focus();
+  }
+
+  function ideaAsText(idea) {
+    return [idea.title, idea.text, idea.source ? '— ' + idea.source : ''].filter(Boolean).join('\n\n');
+  }
+  function deleteIdeaWithUndo(id) {
+    const old = removeIdea(id);
+    if (old) toast('Идея удалена.', { label: 'Вернуть', fn: () => restoreIdea(old) });
+  }
+  function ideaMenu(anchor, idea) {
+    if (!idea) return;
+    openMenu(anchor, [
+      { label: 'Изменить', icon: 'edit', fn: () => openAdd({ idea: idea }) },
+      { label: 'Скопировать текст', icon: 'copy', fn: () => copyText(ideaAsText(idea), 'Текст идеи скопирован.') },
+      { label: 'Удалить', icon: 'trash', danger: true, fn: () => deleteIdeaWithUndo(idea.id) },
+    ]);
+  }
+
+  /* ───────── добавление и правка идей ───────── */
+  function stashPicker(selected, prefix) {
+    const sel = h('select', { class: 'select', id: prefix + '-stash' });
+    const name = h('input', { class: 'input', id: prefix + '-newstash', type: 'text', maxlength: '120', autocomplete: 'off', placeholder: 'Название новой коллекции', 'aria-label': 'Название новой коллекции', hidden: true });
+    const options = () => fill(sel, h('option', { value: '', text: 'Без коллекции' }),
+      sortedStashes().map((s) => h('option', { value: s.id, text: s.title })), h('option', { value: '+', text: '＋ Новая коллекция…' }));
+    options();
+    sel.value = store.stashes.has(selected) ? selected : '';
+    sel.addEventListener('change', () => { name.hidden = sel.value !== '+'; if (!name.hidden) name.focus(); });
+    const same = (title) => sortedStashes().find((s) => s.title.toLowerCase() === title.toLowerCase());
+    return {
+      el: h('div', { class: 'vstack tight' }, sel, name),
+      sel: sel,
+      name: name,
+      suggest: function (title) {   // предложить коллекцию по названию: существующую или новую
+        const found = same(title);
+        if (found) { sel.value = found.id; name.hidden = true; } else { sel.value = '+'; name.hidden = false; name.value = title; }
+      },
+      resolve: function () {        // id коллекции ('' — без коллекции); null, если новая не названа
+        if (sel.value !== '+') return sel.value;
+        const title = name.value.trim();
+        if (!title) return null;
+        const st = same(title) || createStash({ title: title, color: nextColor() });
+        options(); sel.value = st.id; name.hidden = true; name.value = '';
+        return st.id;
+      },
+    };
+  }
+
+  function openAdd(opts) {
+    opts = opts || {};
+    const editing = opts.idea ? store.ideas.get(opts.idea.id) : null;
+    let tab = editing ? 'one' : (opts.tab || 'one');
+    if (tab === 'ai' && !env.sample) tab = 'one';
+    const panes = {};
+    const tabs = editing ? null : segmented(
+      [['one', 'Одна идея'], ['bulk', 'Списком']].concat(env.sample ? [['ai', 'С Claude']] : []),
+      () => tab, (v) => { tab = v; show(); }, 'full');
+    const sheet = openSheet({
+      title: editing ? 'Изменить идею' : 'Новая идея',
+      tabs: tabs && tabs.el,
+      dirty: () => Object.keys(panes).some((k) => panes[k].dirty()),
+      onClose: () => Object.keys(panes).forEach((k) => { if (panes[k].dispose) panes[k].dispose(); }),
+    });
+    function show() {
+      if (!panes[tab]) panes[tab] = tab === 'bulk' ? paneBulk() : tab === 'ai' ? paneAI() : paneOne();
+      fill(sheet.body, panes[tab].el);
+      panes[tab].foot();
+      if (tabs) tabs.update();
+      if (panes[tab].focus) panes[tab].focus();
+    }
+    const done = (stash) => { sheet.close(true); if (stash && !editing) go('c-' + stash); };
+
+    function paneOne() {
+      const init = editing || { title: '', text: '', stash: opts.stash || '', source: opts.stash ? lastSource(opts.stash) : '', url: '', tags: [] };
+      const title = h('input', { class: 'input', id: 'f-title', type: 'text', maxlength: '160', autocomplete: 'off', placeholder: 'Главная мысль одной строкой', value: init.title });
+      const text = h('textarea', { class: 'textarea', id: 'f-text', rows: '6', maxlength: '6000', placeholder: 'Суть своими словами: два-четыре предложения', value: init.text });
+      const counter = h('span', { class: 'counter' });
+      const picker = stashPicker(init.stash, 'f');
+      const source = h('input', { class: 'input', id: 'f-source', type: 'text', maxlength: '200', autocomplete: 'off', list: 'dl-sources', placeholder: 'Автор, книга, подкаст', value: init.source });
+      const url = h('input', { class: 'input', id: 'f-url', type: 'url', inputmode: 'url', maxlength: '500', autocomplete: 'off', placeholder: 'https://', value: init.url });
+      const tags = h('input', { class: 'input', id: 'f-tags', type: 'text', maxlength: '200', autocomplete: 'off', placeholder: 'через запятую: привычки, фокус', value: init.tags.join(', ') });
+      const err = h('p', { class: 'form-error', role: 'alert', hidden: true });
+      const recount = () => { const n = text.value.length; counter.textContent = n + ' зн.'; counter.classList.toggle('warn', n > 700); };
+      text.addEventListener('input', recount);
+      recount();
+      const snap = () => [title.value, text.value, picker.sel.value, picker.name.value, source.value, url.value, tags.value].join('\u0001');
+      let base = snap();
+      const fail = (message, control) => { err.textContent = message; err.hidden = false; if (control) control.focus(); return null; };
+      function collect() {
+        err.hidden = true;
+        const t = title.value.trim(), x = text.value.trim();
+        let u = url.value.trim();
+        if (u && !/^[a-z][a-z0-9+.-]*:/i.test(u) && /^[^\s/]+\.[^\s]+$/.test(u)) { u = 'https://' + u; url.value = u; }   // адрес без https:// дополняем сами
+        if (!t && !x) return fail('Напишите заголовок или текст идеи.', title);
+        if (u && !/^https?:\/\/\S+$/i.test(u)) return fail('Ссылка должна начинаться с https://', url);
+        const stash = picker.resolve();
+        if (stash === null) return fail('Назовите новую коллекцию.', picker.name);
+        return { title: t, text: x, stash: stash, source: source.value.trim(), url: u, tags: parseTags(tags.value) };
+      }
+      function save(again) {
+        const data = collect();
+        if (!data) return;
+        if (editing) { updateIdea(editing.id, data); toast('Изменения сохранены.'); sheet.close(true); return; }
+        createIdea(data);
+        if (again) {
+          toast('Идея добавлена. Можно писать следующую.');
+          title.value = ''; text.value = ''; url.value = '';
+          recount(); base = snap(); title.focus();
+        } else { toast('Идея добавлена.'); sheet.close(true); }
+      }
+      const popular = derived().tags.slice(0, 8).map((t) => t[0]);
+      const tagChips = popular.length ? h('div', { class: 'chips' }, popular.map((t) => h('button', { class: 'chip', type: 'button', onclick: () => {
+        const list = parseTags(tags.value);
+        const at = list.indexOf(t);
+        if (at >= 0) list.splice(at, 1); else list.push(t);
+        tags.value = list.join(', ');
+      } }, '#' + t))) : null;
+      const el = h('div', { class: 'vstack form' },
+        field('Заголовок', title), field('Текст', text, counter), field('Коллекция', picker.el, null, picker.sel.id),
+        field('Источник', source), field('Теги', h('div', { class: 'vstack tight' }, tags, tagChips), null, tags.id), field('Ссылка', url), err);
+      return {
+        el: el,
+        dirty: () => snap() !== base,
+        focus: () => { if (!editing) title.focus(); },
+        foot: () => sheet.setFoot(editing
+          ? [btn('Удалить', () => { sheet.close(true); deleteIdeaWithUndo(editing.id); }, 'btn-ghost btn-danger', 'trash'), h('span', { class: 'grow' }), btn('Сохранить', () => save(false), 'btn-primary')]
+          : [btn('Сохранить и ещё одну', () => save(true), 'btn-line'), btn('Сохранить', () => save(false), 'btn-primary')]),
+      };
+    }
+
+    function paneBulk() {
+      const ta = h('textarea', { class: 'textarea', id: 'b-text', rows: '8', placeholder: 'Заголовок первой идеи\nЕё текст в одну или несколько строк.\n\nЗаголовок второй идеи\nИ её текст.' });
+      const info = h('p', { class: 'hint' });
+      const preview = h('div', { class: 'bulk-preview' });
+      const picker = stashPicker(opts.stash || '', 'b');
+      const source = h('input', { class: 'input', id: 'b-source', type: 'text', maxlength: '200', autocomplete: 'off', list: 'dl-sources', placeholder: 'Автор, книга, подкаст', value: opts.stash ? lastSource(opts.stash) : '' });
+      const addBtn = btn('Добавить', addAll, 'btn-primary');
+      let parsed = [];
+      function refresh() {
+        parsed = parseBulk(ta.value);
+        info.textContent = parsed.length ? 'Распознано: ' + nIdeas(parsed.length) + '.' : 'Каждая идея — отдельный абзац, между идеями пустая строка. Первая строка абзаца станет заголовком.';
+        fill(preview, parsed.slice(0, 30).map((p, k) => h('div', { class: 'bulk-item' },
+          h('b', { text: (k + 1) + '. ' + (p.title || snippet(p.text, 70)) }), p.title && p.text ? h('span', { text: snippet(p.text, 110) }) : null)));
+        addBtn.disabled = !parsed.length;
+        addBtn.textContent = parsed.length ? 'Добавить ' + nIdeasAcc(parsed.length) : 'Добавить';
+      }
+      function addAll() {
+        if (!parsed.length) return;
+        const stash = picker.resolve();
+        if (stash === null) { picker.name.focus(); return; }
+        const src = source.value.trim(), t0 = Date.now();
+        parsed.forEach((p, k) => createIdea({ title: p.title, text: p.text, stash: stash, source: src, createdAt: t0 + k, updatedAt: t0 + k }));
+        toast('Добавлено: ' + nIdeas(parsed.length) + '.');
+        done(stash);
+      }
+      ta.addEventListener('input', refresh);
+      refresh();
+      const el = h('div', { class: 'vstack form' },
+        field('Идеи', ta), info, preview,
+        h('button', { class: 'linkbtn', type: 'button', onclick: () => copyText(CHAT_PROMPT, 'Промпт скопирован. Отправьте его в любой ИИ-чат, а следом — название книги или текст.') }, 'Скопировать промпт для ИИ-чата, который выдаст идеи в таком виде'),
+        field('Коллекция', picker.el, null, picker.sel.id), field('Источник', source));
+      return { el: el, dirty: () => ta.value.trim().length > 0, focus: () => ta.focus(), foot: () => sheet.setFoot([addBtn]) };
+    }
+
+    function paneAI() {
+      const src = h('textarea', { class: 'textarea', id: 'ai-src', rows: '7', maxlength: '60000', placeholder: 'Вставьте текст статьи или конспекта. Или просто назовите книгу либо тему.' });
+      let n = 5, state = 'idle', ctl = null, items = [], checks = [], lastAsk = '';
+      const nSeg = segmented([[3, '3'], [5, '5'], [7, '7'], [10, '10']], () => n, (v) => { n = v; nSeg.update(); });
+      const picker = stashPicker(opts.stash || '', 'ai');
+      const source = h('input', { class: 'input', id: 'ai-source', type: 'text', maxlength: '200', autocomplete: 'off', list: 'dl-sources', placeholder: 'Автор, книга, подкаст' });
+      const statusText = h('span', { text: '' });
+      const busyBox = h('div', { class: 'busy', role: 'status', hidden: true }, h('i', { class: 'spin' }), statusText);
+      const err = h('p', { class: 'form-error', role: 'alert', hidden: true });
+      const list = h('div', { class: 'vstack tight' });
+      const inputBox = h('div', { class: 'vstack form' },
+        field('Материал', src),
+        h('div', { class: 'field' }, h('span', { class: 'label', text: 'Сколько идей выделить' }), nSeg.el),
+        h('p', { class: 'hint', text: 'Запрос идёт через ваш аккаунт Claude и расходует его лимит. Если вы даёте только название, Claude пишет по памяти: важное сверяйте с источником.' }));
+      const resultBox = h('div', { class: 'vstack form', hidden: true },
+        h('p', { class: 'hint', text: 'Отметьте идеи, которые хотите сохранить. Текст потом можно поправить.' }), list,
+        field('Коллекция', picker.el, null, picker.sel.id), field('Источник', source));
+      const el = h('div', { class: 'vstack form' }, inputBox, busyBox, err, resultBox);
+
+      function render() {
+        inputBox.hidden = state !== 'idle';
+        busyBox.hidden = state !== 'busy';
+        resultBox.hidden = state !== 'result';
+        if (state === 'result') {
+          checks = items.map((_, k) => h('input', { type: 'checkbox', id: 'ai-pick-' + k, checked: true, onchange: foot }));
+          fill(list, items.map((it, k) => h('label', { class: 'pick', for: 'ai-pick-' + k }, checks[k],
+            h('div', null, it.title ? h('b', { text: it.title }) : null, h('span', { text: it.text })))));
+        }
+        foot();
+      }
+      function foot() {
+        if (state === 'idle') sheet.setFoot([btn('Выделить идеи', run, 'btn-primary', 'spark')]);
+        else if (state === 'busy') sheet.setFoot([btn('Остановить', () => { if (ctl) ctl.abort(); }, 'btn-line', 'stop')]);
+        else {
+          const k = checks.filter((c) => c.checked).length;
+          const save = btn(k ? 'Сохранить ' + nIdeasAcc(k) : 'Ничего не выбрано', saveAll, 'btn-primary');
+          save.disabled = !k;
+          sheet.setFoot([btn('Назад', () => { state = 'idle'; render(); }, 'btn-line', 'left'), save]);
+        }
+      }
+      async function run() {
+        const material = src.value.trim();
+        if (material.length < 3) { src.focus(); return; }
+        const ask = n + '\u0001' + material;
+        const o = { onText: (u) => {
+          const k = (String(u.text).match(/"title"\s*:/g) || []).length;
+          if (k) statusText.textContent = 'Claude пишет идеи: ' + Math.min(k, n) + ' из ' + n + '…';
+        } };
+        if (ask === lastAsk) o.cache = false;   // тот же запрос ещё раз — значит, нужен новый ответ, а не сохранённый
+        lastAsk = ask;
+        ctl = new AbortController();
+        o.signal = ctl.signal;
+        err.hidden = true;
+        state = 'busy';
+        statusText.textContent = 'Claude читает материал. Обычно это занимает до минуты.';
+        render();
+        try {
+          const got = parseAI(await env.sample.json(aiPrompt(material, n), o));
+          if (!got.items.length) throw { code: 'invalid_json' };
+          items = got.items;
+          if (!picker.sel.value && got.collection) picker.suggest(got.collection);
+          if (!source.value && got.source) source.value = got.source;
+          state = 'result';
+        } catch (e) {
+          state = 'idle';
+          const code = e && e.code;
+          if (code !== 'cancelled') {
+            err.textContent = code === 'rate_limited' && e.reason === 'usage_limit' ? 'Лимит использования Claude исчерпан. Попробуйте позже.'
+              : AI_ERRORS[code] || 'Не удалось получить ответ: похоже, проблема со связью. Попробуйте ещё раз.';
+            err.hidden = false;
+          }
+        }
+        ctl = null;
+        render();
+      }
+      function saveAll() {
+        const chosen = items.filter((_, k) => checks[k].checked);
+        if (!chosen.length) return;
+        const stash = picker.resolve();
+        if (stash === null) { picker.name.focus(); return; }
+        const srcText = source.value.trim(), t0 = Date.now();
+        chosen.forEach((it, k) => createIdea({ title: it.title, text: it.text, tags: it.tags, stash: stash, source: srcText, createdAt: t0 + k, updatedAt: t0 + k }));
+        toast('Сохранено: ' + nIdeas(chosen.length) + '.');
+        state = 'idle'; src.value = '';
+        done(stash);
+      }
+      return {
+        el: el,
+        dirty: () => state !== 'idle' || src.value.trim().length > 0,
+        focus: () => { if (state === 'idle') src.focus(); },
+        foot: foot,
+        dispose: () => { if (ctl) ctl.abort(); },
+      };
+    }
+
+    show();
+  }
+
+  /* ───────── коллекции ───────── */
+  function openStashForm(st) {
+    const name = h('input', { class: 'input', id: 's-title', type: 'text', maxlength: '120', autocomplete: 'off', placeholder: 'Например, название книги или тема', value: st ? st.title : '' });
+    const note = h('textarea', { class: 'textarea short', id: 's-note', rows: '3', maxlength: '600', placeholder: 'О чём эта коллекция (необязательно)', value: st ? st.note : '' });
+    let color = st ? st.color : nextColor();
+    const swatches = h('div', { class: 'swatches', role: 'radiogroup', 'aria-label': 'Цвет маркера' });
+    const paintSwatches = () => fill(swatches, MARKERS.map((label, k) => h('button', { class: 'swatch mk-' + k, type: 'button', role: 'radio', 'aria-checked': String(k === color), 'aria-label': label, title: label, onclick: () => { color = k; paintSwatches(); } })));
+    paintSwatches();
+    const err = h('p', { class: 'form-error', role: 'alert', hidden: true });
+    const snap = () => name.value + '\u0001' + note.value + '\u0001' + color;
+    const base = snap();
+    const sheet = openSheet({ title: st ? 'Изменить коллекцию' : 'Новая коллекция', dirty: () => snap() !== base });
+    function save() {
+      const title = name.value.trim();
+      if (!title) { err.textContent = 'Дайте коллекции название.'; err.hidden = false; name.focus(); return; }
+      if (st) { updateStash(st.id, { title: title, note: note.value.trim(), color: color }); toast('Коллекция обновлена.'); sheet.close(true); }
+      else { const made = createStash({ title: title, note: note.value.trim(), color: color }); sheet.close(true); go('c-' + made.id); }
+    }
+    fill(sheet.body, h('div', { class: 'vstack form' }, field('Название', name), field('Описание', note),
+      h('div', { class: 'field' }, h('span', { class: 'label', text: 'Цвет маркера' }), swatches), err));
+    sheet.setFoot([btn('Сохранить', save, 'btn-primary')]);
+    name.focus();
+  }
+  async function askRemoveStash(st) {
+    const n = ideasOf(st.id).length;
+    const choice = await dialog(n ? {
+      title: 'Удалить коллекцию «' + st.title + '»?',
+      text: 'В ней ' + nIdeas(n) + '. Их можно оставить в библиотеке без коллекции или удалить вместе с ней.',
+      actions: [{ label: 'Отмена', value: null, kind: 'btn-primary' }, { label: 'Удалить только коллекцию', value: 'keep' }, { label: 'Удалить вместе с идеями', value: 'all', kind: 'btn-line btn-danger' }],
+    } : {
+      title: 'Удалить коллекцию «' + st.title + '»?',
+      actions: [{ label: 'Отмена', value: null, kind: 'btn-primary' }, { label: 'Удалить', value: 'keep', kind: 'btn-line btn-danger' }],
+    });
+    if (!choice) return;
+    lib.tab = 'stashes';
+    go('library');
+    removeStash(st.id, choice === 'all');
+    toast('Коллекция удалена.');
+  }
+
+  /* ───────── данные: копия, загрузка, очистка ───────── */
+  function exportData() {
+    const payload = exportPayload();
+    const filename = 'sut-' + todayKey() + '.json';
+    const asText = () => showTextSheet('Копия данных', payload, 'Сохранить файл здесь не получилось. Скопируйте текст и сохраните его в файл с расширением .json.');
+    if (env.downloads) {
+      env.downloads.save({ filename: filename, data: payload }).then(
+        () => toast('Копия сохранена в файл ' + filename + '.'),
+        (e) => { if (!e || e.code !== 'declined') asText(); });
+      return;
+    }
+    if (env.hosted) { asText(); return; }
+    try {
+      const href = URL.createObjectURL(new Blob([payload], { type: 'application/json' }));
+      const a = h('a', { href: href, download: filename });
+      doc.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(href), 4000);
+      toast('Файл ' + filename + ' сохранён в загрузки.');
+    } catch (e) { asText(); }
+  }
+  function openImport() {
+    const file = h('input', { class: 'input', id: 'imp-file', type: 'file', accept: '.json,application/json' });
+    const ta = h('textarea', { class: 'textarea short', id: 'imp-text', rows: '4', placeholder: 'Или вставьте сюда текст копии' });
+    const info = h('p', { class: 'hint', text: 'Идеи из копии добавятся к вашим. Если идея уже есть в картотеке, она заменится вариантом из копии.' });
+    const err = h('p', { class: 'form-error', role: 'alert', hidden: true });
+    let fromFile = '';
+    const sheet = openSheet({ title: 'Загрузить из копии' });
+    file.addEventListener('change', () => {
+      const f = file.files && file.files[0];
+      if (!f) return;
+      const reader = new FileReader();
+      reader.onload = () => { fromFile = String(reader.result || ''); err.hidden = true; info.textContent = 'Файл «' + f.name + '» прочитан. Нажмите «Загрузить».'; };
+      reader.onerror = () => { err.textContent = 'Не удалось прочитать файл.'; err.hidden = false; };
+      reader.readAsText(f);
+    });
+    function apply() {
+      const text = fromFile || ta.value.trim();
+      if (!text) { err.textContent = 'Выберите файл копии или вставьте её текст.'; err.hidden = false; return; }
+      const res = importData(text);
+      if (res.error) { err.textContent = res.error; err.hidden = false; return; }
+      toast('Загружено: ' + nIdeas(res.added) + (res.updated ? ', обновлено: ' + res.updated : '') + '.');
+      sheet.close(true);
+    }
+    fill(sheet.body, h('div', { class: 'vstack form' }, field('Файл копии', file), field('Текст копии', ta), info, err));
+    sheet.setFoot([btn('Загрузить', apply, 'btn-primary', 'up')]);
+  }
+  async function askRemoveDemo() {
+    const n = derived().demo;
+    const ok = await dialog({ title: 'Убрать готовые подборки?', text: 'Из картотеки уйдёт ' + nIdeas(n) + ' из каталога вместе с отметками о прочтении. Ваши собственные идеи останутся, а подборки можно будет вернуть из каталога.',
+      actions: [{ label: 'Отмена', value: false, kind: 'btn-primary' }, { label: 'Убрать', value: true, kind: 'btn-line btn-danger' }] });
+    if (!ok) return;
+    removeDemo();
+    toast('Готовые подборки убраны.');
+  }
+  async function askWipe() {
+    const ok = await dialog({ title: 'Удалить всё?', text: 'Удалятся все идеи, коллекции и история чтения. Отменить это нельзя: если данные могут пригодиться, сначала сохраните копию.',
+      actions: [{ label: 'Отмена', value: false, kind: 'btn-primary' }, { label: 'Удалить всё', value: true, kind: 'btn-solid-danger' }] });
+    if (!ok) return;
+    wipeAll();
+    toast('Картотека очищена.');
+  }
+
+  /* ───────── общие блоки экранов ───────── */
+  function ideaCard(idea, context, inStash) {   // inStash: карточка показана внутри своей коллекции, вместо её названия нужен источник
+    const s = stashOf(idea);
+    const el = h('article', { class: 'icard mk-' + (s ? s.color : 0) + (idea.skip ? ' is-skip' : ''), role: 'button', tabindex: '0' },
+      idea.title ? h('h3', { class: 'icard-title' }, h('span', { class: 'hl', text: idea.title })) : null,
+      idea.text ? h('p', { class: 'icard-text' + (idea.title ? '' : ' solo'), text: idea.text }) : null,
+      h('div', { class: 'icard-meta' },
+        s && !inStash ? h('span', { class: 'tag-st' }, h('i'), h('span', { class: 'ellip', text: s.title })) : null,
+        idea.source && (inStash || !s) ? h('span', { class: 'ellip', text: idea.source }) : null,
+        h('span', { class: 'grow' }),
+        idea.skip ? h('span', { class: 'badge', text: 'не моё' }) : idea.seen ? null : h('span', { class: 'badge', text: 'новая' }),
+        idea.fav ? h('span', { class: 'fav-on', role: 'img', 'aria-label': 'В избранном' }, icon('heart', 16)) : null));
+    const open = () => { const ids = context(); openReader({ ids: ids, index: ids.indexOf(idea.id), mode: 'list' }); };
+    el.addEventListener('click', open);
+    el.addEventListener('keydown', (e) => { if (e.target === el && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); open(); } });
+    return el;
+  }
+  function stashCard(st) {
+    const list = ideasOf(st.id);
+    const read = list.filter((i) => i.seen).length;
+    return h('button', { class: 'stash mk-' + st.color, type: 'button', onclick: () => go('c-' + st.id) },
+      h('span', { class: 'stash-tab', text: String(list.length) }),
+      h('span', { class: 'stash-title', text: st.title }),
+      h('span', { class: 'stash-meta', text: list.length ? 'прочитано ' + read + ' из ' + list.length : 'пока пусто' }));
+  }
+  function packRow(p, isNew) {
+    return h('div', { class: 'pack mk-' + p.color },
+      h('div', { class: 'pack-main' },
+        h('span', { class: 'pack-title' }, h('i'), h('span', { text: p.title }), isNew ? h('span', { class: 'badge', text: 'новая' }) : null),
+        p.note ? h('span', { class: 'hint', text: p.note }) : null,
+        h('span', { class: 'pack-meta', text: nIdeas(p.ideas.length) })),
+      btn('Добавить', () => { addPacks([p]); toast('Подборка «' + p.title + '» добавлена: ' + nIdeas(p.ideas.length) + '.'); }, 'btn-sm btn-line', 'plus'));
+  }
+  function interestsPanel() {
+    const rows = interestRows();
+    return h('section', { class: 'panel' },
+      h('div', { class: 'block-head' }, h('h2', { text: 'Ваши интересы' })),
+      rows.length ? h('div', { class: 'taste' }, rows.map((r) => h('div', { class: 'taste-row mk-' + r.color },
+        h('span', { class: 'tag-st' }, h('i'), h('span', { class: 'ellip', text: r.title })),
+        h('span', { class: 'taste-nums', text: 'зацепило ' + r.fav + ' · не моё ' + r.skip + ' · прочитано ' + r.read + ' из ' + r.total }))))
+        : h('p', { class: 'hint', text: 'Отмечайте при чтении «Зацепило» и «Не моё». Здесь появится картина того, какие темы вам на самом деле интересны.' }),
+      rows.length ? h('p', { class: 'hint', text: 'Сверху то, что цепляет чаще. По этой сводке удобно подбирать новые идеи: скопируйте её и пришлите Claude.' }) : null,
+      rows.length ? h('div', { class: 'row' }, btn('Скопировать сводку', () => copyText(interestsText(rows), 'Сводка скопирована.'), 'btn-line', 'copy')) : null);
+  }
+  function emptyLibrary() {
+    return h('section', { class: 'empty' },
+      h('h2', { text: 'Картотека пока пуста' }),
+      h('p', { text: 'Здесь будет подборка дня: несколько идей из вашей библиотеки на каждый день. Добавьте первую — мысль из книги, статьи, подкаста или свою собственную.' }),
+      h('div', { class: 'row' },
+        btn('Добавить идею', () => openAdd({ tab: 'one' }), 'btn-primary', 'plus'),
+        env.sample ? btn('Выделить идеи с Claude', () => openAdd({ tab: 'ai' }), 'btn-line', 'spark') : null,
+        packs.length ? btn('Взять готовые подборки', openCatalog, 'btn-line', 'cards') : null));
+  }
+  function openCatalog() {
+    lib.fresh = newPacks().map((p) => p.id);   // чтобы метка «новая» пережила отметку о просмотре
+    seePacks();
+    lib.tab = 'stashes';
+    go('library');
+  }
+  function demoNote() {
+    if (store.state.demoNote || !derived().demo) return null;
+    return h('div', { class: 'notice inline' }, icon('info', 18),
+      h('p', { text: 'Для начала здесь лежат готовые подборки на разные темы. Отмечайте при чтении «Зацепило» и «Не моё»: так станет видно, что вам интересно, а лишнее перестанет попадаться.' }),
+      btn('Понятно', () => patchState({ demoNote: true }), 'btn-sm btn-line'));
+  }
+  function packsNote() {
+    const fresh = newPacks();
+    if (!fresh.length || !store.ideas.size) return null;
+    const names = fresh.slice(0, 3).map((p) => '«' + p.title + '»').join(', ') + (fresh.length > 3 ? ' и ещё ' + (fresh.length - 3) : '');
+    return h('div', { class: 'notice inline' }, icon('spark', 18),
+      h('p', { text: 'В каталоге новые подборки: ' + names + '.' }),
+      btn('Посмотреть', openCatalog, 'btn-sm btn-primary'), btn('Позже', seePacks, 'btn-sm btn-line'));
+  }
+
+  /* ───────── установка на устройство (только самостоятельная версия, не страница внутри Claude) ───────── */
+  const HINT_KEY = 'sut.hint.install';
+  // установить можно только сборку из site/: у неё в <head> есть ссылка на манифест
+  const canInstall = () => !env.hosted && /^https?:$/.test(location.protocol) && !!doc.querySelector('link[rel="manifest"]');
+  const isStandalone = () => (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+  const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const IOS_STEPS = 'Откройте эту страницу в Safari, нажмите «Поделиться», затем «На экран „Домой“».';
+  function hintDismissed() { try { return localStorage.getItem(HINT_KEY) === '1'; } catch (e) { return true; } }
+  function runInstall() {
+    const ev = env.installEvent;
+    if (!ev) return;
+    env.installEvent = null;
+    try { ev.prompt(); } catch (e) { /* браузер передумал показывать окно установки */ }
+    emit();
+  }
+  function installNote() {
+    if (!canInstall() || isStandalone() || hintDismissed()) return null;
+    const ios = isIOS();
+    if (!env.installEvent && !ios) return null;
+    return h('div', { class: 'notice inline' }, icon('down', 18),
+      h('p', { text: ios ? 'Поставьте «Суть» на экран «Домой», чтобы открывать в одно касание. ' + IOS_STEPS : 'Установите «Суть» как приложение: значок на экране, запуск в одно касание, работа без интернета.' }),
+      env.installEvent ? btn('Установить', runInstall, 'btn-sm btn-primary') : null,
+      btn(ios ? 'Понятно' : 'Не сейчас', () => { try { localStorage.setItem(HINT_KEY, '1'); } catch (e) { /* без хранилища подсказка просто появится снова */ } emit(); }, 'btn-sm btn-line'));
+  }
+  function installPanel() {
+    if (!canInstall()) return null;
+    let body;
+    if (isStandalone()) body = h('p', { class: 'hint', text: 'Приложение установлено на это устройство и работает без интернета. Идеи хранятся здесь же, в памяти устройства.' });
+    else if (env.installEvent) {
+      body = [h('p', { class: 'hint', text: 'Установите «Суть» как обычное приложение: значок на экране, запуск в одно касание, работа без интернета.' }),
+        h('div', { class: 'row' }, btn('Установить приложение', runInstall, 'btn-primary', 'down'))];
+    } else if (isIOS()) body = h('p', { class: 'hint', text: 'Чтобы установить на iPhone или iPad: ' + IOS_STEPS.charAt(0).toLowerCase() + IOS_STEPS.slice(1) });
+    else body = h('p', { class: 'hint', text: 'Чтобы установить: откройте меню браузера и выберите «Установить приложение» или «Добавить на главный экран».' });
+    return h('section', { class: 'panel' }, h('div', { class: 'block-head' }, h('h2', { text: 'Приложение' })), body);
+  }
+  function setupInstall() {
+    if (!canInstall()) return;
+    window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); env.installEvent = e; emit(); });
+    window.addEventListener('appinstalled', () => { env.installEvent = null; emit(); });
+    if (isStandalone() && navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});   // просим не вычищать данные приложения
+    if (!('serviceWorker' in navigator)) return;
+    const hadWorker = !!navigator.serviceWorker.controller;
+    navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).catch(() => { /* файла нет в локальной копии: приложение работает и без него */ });
+    navigator.serviceWorker.addEventListener('controllerchange', () => { if (hadWorker) { env.updateReady = true; emit(); } });
+  }
+
+  /* ───────── экран «Сегодня» ───────── */
+  function deckHero() {
+    const s = deckState();
+    if (!s.deck.length) {
+      return h('section', { class: 'empty' }, h('h2', { text: 'Подборку не из чего собрать' }),
+        h('p', { text: 'Все идеи отмечены как «Не моё». Добавьте новые из каталога или верните что-нибудь: в библиотеке есть фильтр «Не моё».' }),
+        packs.length ? btn('Открыть каталог', openCatalog, 'btn-line', 'cards') : null);
+    }
+    const done = s.left.length === 0;
+    const next = store.ideas.get(done ? s.deck[0] : s.left[0]);
+    // чтение в спокойном темпе плюс несколько секунд на то, чтобы обдумать каждую карточку
+    const mins = Math.max(1, Math.round(s.left.reduce((sum, id) => sum + wordsOf(store.ideas.get(id)), 0) / 140 + s.left.length * 0.15));
+    const untouched = s.left.length === s.deck.length;
+    return h('section', { class: 'deck mk-' + markerOf(next), 'aria-label': 'Подборка дня' },
+      h('div', { class: 'deck-top' }, h('span', { class: 'label', text: 'Подборка дня' }),
+        h('span', { class: 'deck-count', text: (s.deck.length - s.left.length) + ' из ' + s.deck.length })),
+      h('p', { class: 'deck-title' }, h('span', { class: 'hl', text: done ? 'На сегодня всё прочитано' : (next.title || snippet(next.text, 90)) })),
+      h('p', { class: 'deck-meta', text: done
+        ? 'Сегодня прочитано: ' + nIdeas(s.readToday) + '. Можно взять ещё одну подборку или вернуться завтра.'
+        : (untouched ? nIdeas(s.deck.length) : 'ещё ' + nIdeas(s.left.length)) + ' · примерно ' + mins + ' ' + plural(mins, 'минута', 'минуты', 'минут') }),
+      h('div', { class: 'dots', 'aria-hidden': 'true' }, s.deck.map((id) => h('i', { class: s.day.ids[id] ? 'on' : '' }))),
+      h('div', { class: 'row' }, done
+        ? [btn('Ещё подборка', moreDaily, 'btn-primary', 'right'), btn('Перечитать', startDaily, 'btn-line')]
+        : btn(untouched ? 'Читать' : 'Продолжить', startDaily, 'btn-primary', 'right')));
+  }
+  function weekBlock(s) {
+    const today = todayKey();
+    const week = h('div', { class: 'week' });
+    for (let back = 6; back >= 0; back--) {
+      const k = addDays(today, -back);
+      const n = countDay(k);
+      week.appendChild(h('div', { class: 'wd' + (n ? ' on' : '') + (back ? '' : ' today'), title: keyToDate(k).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }) + ': ' + nIdeas(n) },
+        h('span', { class: 'wd-dot', text: n ? String(n) : '' }), h('span', { text: WEEKDAYS[keyToDate(k).getDay()] })));
+    }
+    return h('section', { class: 'block' },
+      h('div', { class: 'block-head' }, h('h2', { text: 'Неделя' }),
+        h('span', { class: 'muted', text: s.current ? 'серия: ' + nDays(s.current) + ' подряд' : 'серия начнётся с первой прочитанной идеи' })),
+      week);
+  }
+  function stashBlock() {
+    const d = derived();
+    const last = (st) => { const list = d.byStash.get(st.id) || []; return Math.max(st.updatedAt, list.length ? list[list.length - 1].createdAt : 0); };
+    const top = Array.from(store.stashes.values()).sort((a, b) => last(b) - last(a) || (a.id < b.id ? -1 : 1)).slice(0, 4);
+    if (!top.length) return null;
+    return h('section', { class: 'block' },
+      h('div', { class: 'block-head' }, h('h2', { text: 'Коллекции' }),
+        h('button', { class: 'linkbtn', type: 'button', onclick: () => { lib.tab = 'stashes'; go('library'); } }, 'Все коллекции')),
+      h('div', { class: 'stashes' }, top.map(stashCard)));
+  }
+  function recentBlock() {
+    const all = derived().all;
+    const ids = () => derived().all.slice(0, 40).map((i) => i.id);
+    return h('section', { class: 'block' },
+      h('div', { class: 'block-head' }, h('h2', { text: 'Недавно добавленные' }),
+        h('button', { class: 'linkbtn', type: 'button', onclick: () => { lib.tab = 'ideas'; go('library'); } }, 'Вся библиотека')),
+      h('div', { class: 'list' }, all.slice(0, 3).map((i) => ideaCard(i, ids))));
+  }
+  function TodayView() {
+    const el = h('div', { class: 'vstack' });
+    function update() {
+      const s = streakInfo();
+      fill(el,
+        h('header', { class: 'vh' },
+          h('div', null,
+            h('p', { class: 'eyebrow', text: cap(new Date().toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' })) }),
+            h('h1', { text: 'Сегодня' })),
+          s.current ? h('span', { class: 'pill', title: 'Дней подряд с чтением' }, icon('flame', 16), nDays(s.current)) : null),
+        installNote() || packsNote() || demoNote(),   // не больше одной подсказки за раз
+        store.ideas.size ? [deckHero(), weekBlock(s), stashBlock(), recentBlock()] : emptyLibrary());
+    }
+    return { el: el, update: update };
+  }
+
+  /* ───────── экран «Библиотека» ───────── */
+  const lib = { tab: 'ideas', q: '', filter: 'all', sort: 'new', limit: 40, fresh: [] };
+  function filterIdeas() {
+    const f = lib.filter;
+    let list = derived().all;
+    if (f === 'fav') list = list.filter((i) => i.fav);
+    else if (f === 'unread') list = list.filter((i) => !i.seen);
+    else if (f === 'skip') list = list.filter((i) => i.skip);
+    else if (f === 'none') list = list.filter((i) => !stashOf(i));
+    else if (f.slice(0, 4) === 'tag:') { const t = f.slice(4); list = list.filter((i) => i.tags.includes(t)); }
+    const words = norm(lib.q).split(/\s+/).filter(Boolean);
+    if (words.length) {
+      list = list.filter((i) => {
+        const s = stashOf(i);
+        const hay = norm(i.title + '\n' + i.text + '\n' + i.source + '\n' + i.tags.join(' ') + '\n' + (s ? s.title : ''));
+        return words.every((w) => hay.includes(w));
+      });
+    }
+    if (lib.sort === 'old') list = list.slice().reverse();
+    else if (lib.sort === 'stale') list = list.slice().sort((a, b) => a.seenAt - b.seenAt || a.createdAt - b.createdAt);
+    return list;
+  }
+  function LibraryView() {
+    const search = h('input', { class: 'input', id: 'lib-search', type: 'search', autocomplete: 'off', placeholder: 'Поиск по идеям, источникам и тегам', 'aria-label': 'Поиск по идеям', value: lib.q,
+      oninput: (e) => { lib.q = e.target.value; lib.limit = 40; update(); } });
+    const searchBox = h('div', { class: 'searchbox' }, icon('search', 18), search);
+    const total = h('span', { class: 'muted' });
+    const seg = segmented([['ideas', 'Идеи'], ['stashes', 'Коллекции']], () => lib.tab, (v) => { lib.tab = v; update(); });
+    const body = h('div', { class: 'vstack' });
+    const el = h('div', { class: 'vstack' }, h('header', { class: 'vh' }, h('h1', { text: 'Библиотека' }), total), seg.el, searchBox, body);
+    let lastSig = '';
+
+    function chips(tags) {
+      const options = [['all', 'Все'], ['unread', 'Непрочитанные'], ['fav', 'Избранное'], ['skip', 'Не моё'], ['none', 'Без коллекции']].concat(tags.map((t) => ['tag:' + t, '#' + t]));
+      return h('div', { class: 'chips', role: 'group', 'aria-label': 'Фильтр' }, options.map((o) =>
+        h('button', { class: 'chip', type: 'button', 'aria-pressed': String(lib.filter === o[0]), onclick: () => { lib.filter = lib.filter === o[0] ? 'all' : o[0]; lib.limit = 40; update(); } }, o[1])));
+    }
+    function toolbar(found) {
+      const sort = h('select', { class: 'select sm', id: 'lib-sort', 'aria-label': 'Порядок', onchange: (e) => { lib.sort = e.target.value; update(); } },
+        h('option', { value: 'new', text: 'Сначала новые' }), h('option', { value: 'old', text: 'Сначала старые' }), h('option', { value: 'stale', text: 'Давно не читал' }));
+      sort.value = lib.sort;
+      return h('div', { class: 'toolbar' }, h('span', { class: 'muted', text: lib.q || lib.filter !== 'all' ? 'Найдено: ' + found : 'Все идеи' }), sort);
+    }
+    function update() {
+      total.textContent = nIdeas(store.ideas.size);
+      seg.update();
+      searchBox.hidden = lib.tab !== 'ideas' || !store.ideas.size;
+      if (lib.tab === 'ideas') {
+        if (!store.ideas.size) { lastSig = 'empty' + (env.sample ? 1 : 0); fill(body, emptyLibrary()); return; }
+        const tags = derived().tags.slice(0, 8).map((t) => t[0]);
+        if (lib.filter.slice(0, 4) === 'tag:' && !tags.includes(lib.filter.slice(4))) lib.filter = 'all';
+        const list = filterIdeas();
+        const shown = list.slice(0, lib.limit);
+        const sig = ['i', lib.filter, lib.sort, lib.q ? 1 : 0, list.length, tags.join(','), shown.map((i) => {
+          const s = stashOf(i);
+          return i.id + i.updatedAt + (i.fav ? 'f' : '') + (i.skip ? 'x' : '') + (i.seen ? 's' : '') + (s ? s.title + s.color : '');
+        }).join('|')].join('~');
+        if (sig === lastSig) return;
+        lastSig = sig;
+        const rest = list.length - shown.length;
+        fill(body, chips(tags), toolbar(list.length),
+          shown.length ? h('div', { class: 'list' }, shown.map((i) => ideaCard(i, () => filterIdeas().map((x) => x.id))))
+            : h('section', { class: 'empty' }, h('h2', { text: 'Ничего не нашлось' }), h('p', { text: 'Попробуйте другое слово или снимите фильтр.' }),
+              btn('Сбросить поиск и фильтр', () => { lib.q = ''; lib.filter = 'all'; search.value = ''; update(); }, 'btn-line')),
+          rest > 0 ? btn('Показать ещё ' + Math.min(40, rest), () => { lib.limit += 40; update(); }, 'btn-line') : null);
+      } else {
+        const sts = sortedStashes();
+        const avail = availablePacks();
+        const sig = 's' + sts.map((s) => { const l = ideasOf(s.id); return s.id + s.title + s.color + l.length + '/' + l.filter((i) => i.seen).length; }).join('|') +
+          '~' + avail.map((p) => p.id + (lib.fresh.includes(p.id) ? '*' : '')).join(',');
+        if (sig === lastSig) return;
+        lastSig = sig;
+        fill(body, h('div', { class: 'stashes' }, sts.map(stashCard),
+          h('button', { class: 'stash new', type: 'button', onclick: () => openStashForm() }, icon('plus', 20), 'Новая коллекция')),
+        avail.length ? h('section', { class: 'block' },
+          h('div', { class: 'block-head' }, h('h2', { text: 'Каталог' }),
+            avail.length > 1 ? h('button', { class: 'linkbtn', type: 'button', onclick: () => { const n = countIdeas(avail); addPacks(avail); toast('Добавлено: ' + nIdeas(n) + '.'); } }, 'Добавить все') : null),
+          h('p', { class: 'hint', text: 'Готовые подборки, которых у вас пока нет. Берите то, что любопытно: идеи начнут попадать в подборку дня.' }),
+          h('div', { class: 'list' }, avail.map((p) => packRow(p, lib.fresh.includes(p.id))))) : null);
+      }
+    }
+    return { el: el, update: update };
+  }
+
+  /* ───────── экран коллекции ───────── */
+  function StashView(route) {
+    const el = h('div', { class: 'vstack' });
+    function update() {
+      const st = store.stashes.get(route.id);
+      if (!st) return;
+      const list = ideasOf(st.id);
+      const ids = () => ideasOf(st.id).map((i) => i.id);
+      const unread = list.findIndex((i) => !i.seen);
+      const more = iconBtn('more', 'Действия с коллекцией', () => openMenu(more, [
+        { label: 'Изменить', icon: 'edit', fn: () => openStashForm(st) },
+        { label: 'Удалить', icon: 'trash', danger: true, fn: () => askRemoveStash(st) },
+      ]), 'line');
+      fill(el,
+        h('button', { class: 'backlink', type: 'button', onclick: () => { lib.tab = 'stashes'; go('library'); } }, icon('left', 18), 'Библиотека'),
+        h('header', { class: 'stash-head mk-' + st.color },
+          h('span', { class: 'tabchip', text: nIdeas(list.length) }),
+          h('h1', null, h('span', { class: 'hl', text: st.title })),
+          st.note ? h('p', { class: 'lead', text: st.note }) : null),
+        h('div', { class: 'row' },
+          list.length ? btn(unread > 0 ? 'Продолжить' : 'Читать', () => openReader({ ids: ids(), index: Math.max(0, unread), mode: 'list', title: st.title }), 'btn-primary', 'play') : null,
+          btn('Добавить', () => openAdd({ tab: 'one', stash: st.id }), 'btn-line', 'plus'), more),
+        list.length ? h('div', { class: 'list' }, list.map((i) => ideaCard(i, ids, true)))
+          : h('section', { class: 'empty' }, h('h2', { text: 'В коллекции пока пусто' }),
+            h('p', { text: 'Добавляйте идеи по одной, списком или попросите Claude выделить главное из текста.' })));
+    }
+    return { el: el, update: update };
+  }
+
+  /* ───────── экран «Прогресс» ───────── */
+  function heatmap() {
+    const today = todayKey();
+    const monday = (keyToDate(today).getDay() + 6) % 7;
+    const start = addDays(today, -(monday + 7 * 15));
+    const goal = store.state.goal;
+    const grid = h('div', { class: 'heat', role: 'img', 'aria-label': 'Прочитанные идеи по дням за последние 16 недель' });
+    for (let k = 0; k < 16 * 7; k++) {
+      const key = addDays(start, k);
+      if (key > today) { grid.appendChild(h('i', { class: 'off' })); continue; }
+      const n = countDay(key);
+      const level = !n ? '' : n >= goal ? 'l3' : n * 2 >= goal ? 'l2' : 'l1';
+      grid.appendChild(h('i', { class: level, title: keyToDate(key).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }) + ': ' + nIdeas(n) }));
+    }
+    return grid;
+  }
+  function MeView() {
+    const el = h('div', { class: 'vstack' });
+    const tile = (value, label) => h('div', { class: 'tile' }, h('b', { text: String(value) }), h('span', { text: label }));
+    function update() {
+      const s = streakInfo();
+      const today = countDay(todayKey());
+      const total = store.ideas.size;
+      let read = 0;
+      store.ideas.forEach((i) => { if (i.seen) read++; });
+      const goal = store.state.goal;
+      const demo = derived().demo;
+      const themeSeg = env.hosted ? null : segmented([['system', 'Как в системе'], ['light', 'Светлая'], ['dark', 'Тёмная']], () => store.state.theme, (v) => patchState({ theme: v }));
+      const where = store.mode === 'cloud'
+        ? 'Идеи хранятся в облаке вашего аккаунта Claude: они одинаковые на телефоне и на компьютере, и видите их только вы.'
+        : env.hosted ? 'Идеи сохраняются только в этом браузере.'
+          : 'Идеи хранятся в этом браузере на этом устройстве. Если очистить данные браузера, они пропадут, поэтому время от времени сохраняйте копию в файл.';
+      fill(el,
+        h('header', { class: 'vh' }, h('h1', { text: 'Прогресс' })),
+        h('div', { class: 'tiles' },
+          tile(s.current, plural(s.current, 'день подряд', 'дня подряд', 'дней подряд')),
+          tile(today, 'прочитано сегодня'),
+          tile(total, plural(total, 'идея в картотеке', 'идеи в картотеке', 'идей в картотеке')),
+          tile(total ? Math.round(read / total * 100) + '%' : '0%', 'прочитано хотя бы раз')),
+        h('section', { class: 'panel' },
+          h('div', { class: 'block-head' }, h('h2', { text: 'Активность' }), h('span', { class: 'muted', text: 'лучшая серия: ' + nDays(s.best) })),
+          h('div', { class: 'heat-wrap' }, heatmap()),
+          h('div', { class: 'legend' }, 'меньше', h('i'), h('i', { class: 'l1' }), h('i', { class: 'l2' }), h('i', { class: 'l3' }), 'цель дня')),
+        interestsPanel(),
+        h('section', { class: 'panel' },
+          h('div', { class: 'block-head' }, h('h2', { text: 'Цель на день' })),
+          h('div', { class: 'stepper' },
+            iconBtn('minus', 'Меньше', () => patchState({ goal: goal - 1 }), 'line'),
+            h('output', { text: nIdeas(goal) + ' в день' }),
+            iconBtn('plus', 'Больше', () => patchState({ goal: goal + 1 }), 'line')),
+          h('p', { class: 'hint', text: 'Столько идей попадает в подборку дня.' })),
+        themeSeg ? h('section', { class: 'panel' }, h('div', { class: 'block-head' }, h('h2', { text: 'Оформление' })), themeSeg.el) : null,
+        installPanel(),
+        h('section', { class: 'panel' },
+          h('div', { class: 'block-head' }, h('h2', { text: 'Данные' })),
+          h('p', { class: 'hint', text: where }),
+          h('div', { class: 'row' }, btn('Сохранить копию в файл', exportData, 'btn-line', 'down'), btn('Загрузить из копии', openImport, 'btn-line', 'up')),
+          demo || total || store.stashes.size ? h('div', { class: 'row' },
+            demo ? btn('Убрать готовые подборки', askRemoveDemo, 'btn-ghost btn-danger') : null,
+            btn('Удалить всё', askWipe, 'btn-ghost btn-danger')) : null),
+        h('p', { class: 'hint', text: 'Суть, версия 1.0' }));
+    }
+    return { el: el, update: update };
+  }
+
+  /* ───────── каркас и навигация ───────── */
+  const NAV = [['today', 'Сегодня', 'sun'], ['library', 'Библиотека', 'cards'], ['me', 'Прогресс', 'chart']];
+  const VIEWS = { today: TodayView, library: LibraryView, stash: StashView, me: MeView };
+  const scrollMemo = new Map();
+  let current = null, navHash = '', noticeSig = null, pendTimer = 0, sourcesSig = null;
+
+  function readHash() { try { return (location.hash || '').replace(/^#/, ''); } catch (e) { return ''; } }
+  function parseRoute() {
+    if (navHash.slice(0, 2) === 'c-' && store.stashes.has(navHash.slice(2))) return { name: 'stash', id: navHash.slice(2) };
+    if (navHash === 'library' || navHash === 'me') return { name: navHash };
+    return { name: 'today' };
+  }
+  function go(name) {
+    navHash = name;
+    try { if (readHash() !== name) location.hash = name; } catch (e) { /* адресная строка недоступна: живём на внутреннем состоянии */ }
+    route();
+  }
+  function route() {
+    if (!store.ready) return;
+    const r = parseRoute();
+    const key = r.name + (r.id ? ':' + r.id : '');
+    if (current && current.key === key) { current.update(); return; }
+    if (current) scrollMemo.set(current.key, stageEl.scrollTop);
+    const view = VIEWS[r.name](r);
+    current = { key: key, update: view.update };
+    fill(viewEl, view.el);
+    view.update();
+    stageEl.scrollTop = scrollMemo.get(key) || 0;
+    const active = r.name === 'stash' ? 'library' : r.name;
+    doc.querySelectorAll('[data-nav]').forEach((b) => {
+      if (b.getAttribute('data-nav') === active) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+    });
+  }
+  function buildShell() {
+    fill(railEl,
+      h('div', { class: 'brand' }, h('span', { class: 'hl', text: 'Суть' })),
+      NAV.map((n) => h('button', { class: 'rail-item', type: 'button', 'data-nav': n[0], onclick: () => go(n[0]) }, icon(n[2], 20), h('span', { class: 'nav-label', text: n[1] }))),
+      btn('Новая идея', () => openAdd({ tab: 'one' }), 'btn-primary rail-add', 'plus'),
+      h('p', { class: 'rail-foot', id: 'rail-foot' }));
+    const tab = (n) => h('button', { class: 'tab', type: 'button', 'data-nav': n[0], onclick: () => go(n[0]) }, icon(n[2], 22), h('span', { class: 'nav-label', text: n[1] }));
+    fill(tabbarEl, tab(NAV[0]), tab(NAV[1]),
+      h('button', { class: 'tab', type: 'button', 'aria-label': 'Новая идея', title: 'Новая идея', onclick: () => openAdd({ tab: 'one' }) }, h('span', { class: 'tab-plus' }, icon('plus', 22))),
+      tab(NAV[2]));
+  }
+  function renderNotice() {
+    const pend = adapter ? adapter.pending() : 0;
+    const busy = pend > 12;
+    if (busy && !pendTimer) pendTimer = setInterval(() => { if (adapter.pending() <= 12) { clearInterval(pendTimer); pendTimer = 0; } renderNotice(); }, 500);
+    const sig = store.note + '|' + (store.retry ? 1 : 0) + '|' + (busy ? pend : 0) + '|' + (env.updateReady ? 1 : 0);
+    if (sig === noticeSig) return;
+    noticeSig = sig;
+    fill(noticeEl,
+      env.updateReady ? h('div', { class: 'notice', role: 'status' }, icon('spark', 18), h('p', { text: 'Вышло обновление приложения.' }),
+        btn('Обновить', () => location.reload(), 'btn-sm btn-primary')) : null,
+      store.note ? h('div', { class: 'notice', role: 'status' }, icon('info', 18), h('p', { text: store.note }),
+        store.retry ? btn('Повторить', store.retry, 'btn-sm btn-line') : null) : null,
+      busy ? h('div', { class: 'notice', role: 'status' }, h('i', { class: 'spin' }), h('p', { text: 'Сохраняю изменения в облако, осталось: ' + pend + '.' })) : null);
+  }
+  function syncSources() {
+    const seen = [];
+    for (const i of derived().all) { if (i.source && !seen.includes(i.source)) seen.push(i.source); if (seen.length >= 60) break; }
+    const sig = seen.join('\n');
+    if (sig === sourcesSig) return;
+    sourcesSig = sig;
+    fill(sourcesEl, seen.map((s) => h('option', { value: s })));
+  }
+  function applyTheme() {
+    if (env.hosted) return;   // внутри Claude светлую или тёмную тему задаёт само приложение Claude
+    const t = store.state.theme;
+    if (t === 'light' || t === 'dark') root.setAttribute('data-theme', t); else root.removeAttribute('data-theme');
+    const meta = doc.querySelector('meta[name="theme-color"]');   // цвет системной полосы у установленного приложения
+    if (meta) meta.setAttribute('content', getComputedStyle(root).getPropertyValue('--bg').trim() || '#f1f2f6');
+  }
+  function onChange() {
+    if (!store.ready) return;
+    applyTheme();
+    renderNotice();
+    syncSources();
+    const foot = doc.getElementById('rail-foot');
+    if (foot) foot.textContent = store.mode === 'cloud' ? 'Идеи хранятся в облаке Claude и видны только вам.' : 'Идеи хранятся в этом браузере.';
+    route();
+    layers.slice().forEach((l) => { if (l.update) l.update(); });
+  }
+
+  async function boot() {
+    root.lang = 'ru';
+    buildShell();
+    navHash = readHash();
+    window.addEventListener('hashchange', () => { navHash = readHash(); route(); });
+
+    const cl = window.claude && typeof window.claude.use === 'function' ? window.claude : null;
+    env.hosted = !!cl;
+    // каталог подборок: в самостоятельной версии встроен в страницу, у страницы в Claude лежит рядом отдельным файлом
+    if (Array.isArray(window.SUT_PACKS)) packs = cleanPacks(window.SUT_PACKS);
+    else if (cl) {
+      fetch('packs.json').then((r) => (r.ok ? r.json() : [])).then((list) => { packs = cleanPacks(list); emit(); })
+        .catch(() => { /* каталог не загрузился: приложение работает и без него */ });
+    }
+    let db = null, owner = false;
+    if (cl) {
+      const use = (name) => Promise.resolve().then(() => cl.use(name)).catch(() => null);
+      use('sample').then((s) => { if (typeof s === 'function' && typeof s.json === 'function') { env.sample = s; emit(); } });
+      use('downloads').then((d) => { if (d && typeof d.save === 'function') env.downloads = d; });
+      const got = await Promise.all([use('db'), use('user')]);
+      db = got[0];
+      try { owner = got[1] ? !!(await got[1].isOwner()) : false; } catch (e) { owner = false; }
+    }
+    if (db && owner) {
+      store.mode = 'cloud';
+      adapter = CloudAdapter(db);
+    } else {
+      store.mode = 'local';
+      adapter = LocalAdapter();
+      if (cl) {
+        store.note = db ? 'Эта картотека принадлежит другому человеку. Ваши идеи сохраняются только в этом браузере.'
+          : 'Облачное хранилище в этом окне недоступно. Показаны идеи, сохранённые в этом браузере.';
+      }
+    }
+    await adapter.start();
+    subs.add(onChange);
+    onChange();
+    setupInstall();
+    if (navHash === 'add') { go('today'); openAdd({ tab: 'one' }); }   // ярлык «Новая идея» на значке приложения
+    if (window.matchMedia) {
+      const scheme = window.matchMedia('(prefers-color-scheme: dark)');
+      if (scheme.addEventListener) scheme.addEventListener('change', applyTheme);
+    }
+
+    let lastDay = todayKey();
+    const tick = () => { const k = todayKey(); if (k !== lastDay) { lastDay = k; emit(); } };
+    setInterval(tick, 30000);
+    doc.addEventListener('visibilitychange', () => { if (!doc.hidden) tick(); });
+  }
+
+  boot().catch((e) => {
+    console.error(e);
+    fill(viewEl, h('section', { class: 'empty' }, h('h2', { text: 'Не получилось открыть картотеку' }),
+      h('p', { text: 'Обновите страницу. Если не поможет, данные всё равно на месте: проблема в отображении, а не в хранилище.' })));
+  });
+})();
+</script>
+</body></html>

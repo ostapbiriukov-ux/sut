@@ -1,0 +1,21 @@
+{
+  "name": "Суть",
+  "short_name": "Суть",
+  "description": "Личная картотека коротких идей: подборка на каждый день, коллекции и режим чтения.",
+  "lang": "ru",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f1f2f6",
+  "theme_color": "#f1f2f6",
+  "categories": ["education", "books", "productivity"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Подборка дня", "url": "./index.html#today" },
+    { "name": "Новая идея", "url": "./index.html#add" }
+  ]
+}
