@@ -1,12 +1,13 @@
 /* Служебный работник «Сути»: держит приложение в памяти устройства, чтобы оно открывалось мгновенно и без интернета.
    Страница и значки отдаются из кэша. Новая сборка приходит с новым номером версии: кэш собирается заново,
    старый удаляется, а открытая страница узнаёт об обновлении и предлагает перезагрузиться. */
-const VERSION = '290cedd5ee';
+const VERSION = '92d553a5db';
 const SHELL = 'sut-shell-' + VERSION;
 const FONTS = 'sut-fonts-v1';
 const ASSETS = [
   './',
   './index.html',
+  './packs.json',
   './manifest.webmanifest',
   './icons/icon-192.png',
   './icons/icon-512.png',
@@ -36,6 +37,16 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
 
   if (url.origin === self.location.origin) {
+    if (/\/packs\.json$/.test(url.pathname)) {
+      // каталог карточек: сначала сеть, чтобы новое приходило сразу; без сети — последняя сохранённая копия
+      event.respondWith(
+        fetch(request).then((response) => {
+          if (response.ok) { const copy = response.clone(); caches.open(SHELL).then((cache) => cache.put('./packs.json', copy)); }
+          return response;
+        }).catch(() => caches.match('./packs.json'))
+      );
+      return;
+    }
     if (request.mode === 'navigate') {
       // любое открытие приложения: сама страница из кэша, сеть только если кэша почему-то нет
       event.respondWith(caches.match('./index.html').then((hit) => hit || fetch(request)));
